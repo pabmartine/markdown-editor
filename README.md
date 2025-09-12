@@ -2,7 +2,7 @@
 
 A simple and powerful Markdown editor with real-time preview, built with GTK4 and Adwaita.
 
-![Markdown Editor Screenshot](screenshot.png)
+![Markdown Editor Screenshot](images/screenshot.png)
 
 ## Features
 
