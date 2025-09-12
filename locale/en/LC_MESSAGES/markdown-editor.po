@@ -1,0 +1,335 @@
+# English translations for Markdown Editor
+# Copyright (C) 2025
+msgid ""
+msgstr ""
+"Project-Id-Version: markdown-editor 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 12:00+0000\n"
+"PO-Revision-Date: 2025-01-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Markdown Editor"
+msgstr "Markdown Editor"
+
+msgid "New document"
+msgstr "New document"
+
+msgid "Open file"
+msgstr "Open file"
+
+msgid "Save file"
+msgstr "Save file"
+
+msgid "Search (Ctrl+F)"
+msgstr "Search (Ctrl+F)"
+
+msgid "Application menu"
+msgstr "Application menu"
+
+msgid "Print..."
+msgstr "Print..."
+
+msgid "Auto-detect"
+msgstr "Auto-detect"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Preferences"
+msgstr "Preferences"
+
+msgid "About"
+msgstr "About"
+
+msgid "Create and edit Markdown documents with real-time preview"
+msgstr "Create and edit Markdown documents with real-time preview"
+
+msgid "New Document"
+msgstr "New Document"
+
+msgid "Create a new blank Markdown document"
+msgstr "Create a new blank Markdown document"
+
+msgid "Create New"
+msgstr "Create New"
+
+msgid "Open File"
+msgstr "Open File"
+
+msgid "Open an existing Markdown document"
+msgstr "Open an existing Markdown document"
+
+msgid "You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one"
+msgstr "You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one"
+
+msgid "Bold (Ctrl+B)"
+msgstr "Bold (Ctrl+B)"
+
+msgid "Italic (Ctrl+I)"
+msgstr "Italic (Ctrl+I)"
+
+msgid "Strikethrough"
+msgstr "Strikethrough"
+
+msgid "Select header"
+msgstr "Select header"
+
+msgid "Bullet list"
+msgstr "Bullet list"
+
+msgid "Numbered list"
+msgstr "Numbered list"
+
+msgid "Task list"
+msgstr "Task list"
+
+msgid "Quote"
+msgstr "Quote"
+
+msgid "Inline code"
+msgstr "Inline code"
+
+msgid "Code block"
+msgstr "Code block"
+
+msgid "Insert link (Ctrl+K)"
+msgstr "Insert link (Ctrl+K)"
+
+msgid "Insert image"
+msgstr "Insert image"
+
+msgid "Insert table"
+msgstr "Insert table"
+
+msgid "Horizontal line"
+msgstr "Horizontal line"
+
+msgid "Editor only"
+msgstr "Editor only"
+
+msgid "Split view"
+msgstr "Split view"
+
+msgid "Preview only"
+msgstr "Preview only"
+
+msgid "Ready"
+msgstr "Ready"
+
+msgid "Modified"
+msgstr "Modified"
+
+msgid "Saved"
+msgstr "Saved"
+
+msgid "lines"
+msgstr "lines"
+
+msgid "words"
+msgstr "words"
+
+msgid "Line"
+msgstr "Line"
+
+msgid "Col"
+msgstr "Col"
+
+msgid "Search in document..."
+msgstr "Search in document..."
+
+msgid "Previous"
+msgstr "Previous"
+
+msgid "Next"
+msgstr "Next"
+
+msgid "matches"
+msgstr "matches"
+
+msgid "No matches"
+msgstr "No matches"
+
+msgid "of"
+msgstr "of"
+
+msgid "_Open"
+msgstr "_Open"
+
+msgid "_Cancel"
+msgstr "_Cancel"
+
+msgid "Markdown files"
+msgstr "Markdown files"
+
+msgid "All files"
+msgstr "All files"
+
+msgid "_Save"
+msgstr "_Save"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Accept"
+msgstr "Accept"
+
+msgid "List item"
+msgstr "List item"
+
+msgid "Task item"
+msgstr "Task item"
+
+msgid "Header 1"
+msgstr "Header 1"
+
+msgid "Header 2"
+msgstr "Header 2"
+
+msgid "Header 3"
+msgstr "Header 3"
+
+msgid "Cell 1"
+msgstr "Cell 1"
+
+msgid "Cell 2"
+msgstr "Cell 2"
+
+msgid "Cell 3"
+msgstr "Cell 3"
+
+msgid "Cell 4"
+msgstr "Cell 4"
+
+msgid "Cell 5"
+msgstr "Cell 5"
+
+msgid "Cell 6"
+msgstr "Cell 6"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "General"
+msgstr "General"
+
+msgid "Interface language"
+msgstr "Interface language"
+
+msgid "Change application language"
+msgstr "Change application language"
+
+msgid "English"
+msgstr "English"
+
+msgid "Spanish"
+msgstr "Español"
+
+msgid "Appearance"
+msgstr "Appearance"
+
+msgid "Dark Theme"
+msgstr "Dark Theme"
+
+msgid "Use dark theme for the application"
+msgstr "Use dark theme for the application"
+
+msgid "Render style"
+msgstr "Render style"
+
+msgid "Preview style"
+msgstr "Preview style"
+
+msgid "Changes the appearance of rendered content"
+msgstr "Changes the appearance of rendered content"
+
+msgid "Default"
+msgstr "Default"
+
+msgid "GitHub"
+msgstr "GitHub"
+
+msgid "GitHub Light"
+msgstr "GitHub Light"
+
+msgid "GitHub Dark"
+msgstr "GitHub Dark"
+
+msgid "GitLab"
+msgstr "GitLab"
+
+msgid "Splendor"
+msgstr "Splendor"
+
+msgid "Modest"
+msgstr "Modest"
+
+msgid "Retro"
+msgstr "Retro"
+
+msgid "Air"
+msgstr "Air"
+
+msgid "A simple and powerful Markdown editor with real-time preview"
+msgstr "A simple and powerful Markdown editor with real-time preview"
+
+msgid "Main Developer"
+msgstr "Main Developer"
+
+msgid "Community Contributors"
+msgstr "Community Contributors"
+
+msgid "Developer"
+msgstr "Developer"
+
+msgid "Table of Contents"
+msgstr "Table of Contents"
+
+msgid "Advanced Markdown Editor"
+msgstr "Advanced Markdown Editor"
+
+msgid "Files to open"
+msgstr "Files to open"
+
+msgid "Start in Vim mode"
+msgstr "Start in Vim mode"
+
+msgid "Editor theme"
+msgstr "Editor theme"
+
+msgid "Enable auto-save with interval in seconds"
+msgstr "Enable auto-save with interval in seconds"
+
+msgid "Enable debug mode"
+msgstr "Enable debug mode"
+
+msgid "Install desktop file"
+msgstr "Install desktop file"
+
+msgid "Run tests"
+msgstr "Run tests"
+
+msgid "ERROR: Missing required dependencies."
+msgstr "ERROR: Missing required dependencies."
+
+msgid "Check the installation guide for more information."
+msgstr "Check the installation guide for more information."
+
+msgid "System integration completed."
+msgstr "System integration completed."
+
+msgid "Application interrupted by user."
+msgstr "Application interrupted by user."
+
+msgid "Fatal error in application"
+msgstr "Fatal error in application"
+
+msgid "ERROR: Python 3.6 or higher required"
+msgstr "ERROR: Python 3.6 or higher required"
+
+msgid "untitled.md"
+msgstr "untitled.md"

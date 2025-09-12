@@ -1,0 +1,88 @@
+app-id: com.pabmartine.MarkdownEditor
+runtime: org.gnome.Platform
+runtime-version: '48'
+sdk: org.gnome.Sdk
+command: markdown-editor
+
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  # Acceso a configuración del usuario (sandbox)
+  - --filesystem=xdg-config:create
+  - --filesystem=xdg-data:create
+  # Solo acceso mínimo necesario
+  - --filesystem=xdg-documents:ro
+  - --filesystem=xdg-desktop:ro
+  # Portales necesarios para GTK
+  - --talk-name=org.freedesktop.portal.*
+  - --talk-name=org.gtk.vfs.*
+  # Para themes
+  - --talk-name=org.freedesktop.appearance
+
+modules:
+  - name: markdown-editor
+    buildsystem: simple
+    build-commands:
+      # Crear directorios necesarios
+      - mkdir -p /app/bin
+      - mkdir -p /app/share/applications
+      - mkdir -p /app/share/icons/hicolor/scalable/apps
+      - mkdir -p /app/share/locale
+      - mkdir -p /app/share/metainfo
+      
+      # Instalar script principal
+      - cp markdown-editor.py /app/bin/
+      
+      # Crear script wrapper con configuración correcta
+      - |
+        cat > /app/bin/markdown-editor << 'EOF'
+        #!/bin/bash
+        
+        # Configurar variables de entorno para Flatpak
+        export FLATPAK_ID="com.pabmartine.MarkdownEditor"
+        export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+        export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+        
+        # Asegurar que existen los directorios de configuración
+        mkdir -p "$XDG_CONFIG_HOME/markdown-editor"
+        mkdir -p "$XDG_DATA_HOME/markdown-editor"
+        
+        # Ejecutar la aplicación
+        cd /app/bin
+        exec python3 markdown-editor.py "$@"
+        EOF
+      
+      - chmod +x /app/bin/markdown-editor
+      
+      # Instalar archivos de datos
+      - install -D -m644 data/com.pabmartine.MarkdownEditor.desktop /app/share/applications/com.pabmartine.MarkdownEditor.desktop
+      - install -D -m644 data/icons/hicolor/scalable/apps/com.pabmartine.MarkdownEditor.svg /app/share/icons/hicolor/scalable/apps/com.pabmartine.MarkdownEditor.svg
+      - install -D -m644 data/com.pabmartine.MarkdownEditor.metainfo.xml /app/share/metainfo/com.pabmartine.MarkdownEditor.metainfo.xml
+      
+      # Instalar traducciones con compilación
+      - |
+        if [ -d "locale" ]; then
+          for lang_dir in locale/*/; do
+            if [ -d "$lang_dir" ]; then
+              lang=$(basename "$lang_dir")
+              po_file="$lang_dir/LC_MESSAGES/markdown-editor.po"
+              
+              # Crear directorio de destino
+              mkdir -p "/app/share/locale/$lang/LC_MESSAGES"
+              
+              if [ -f "$po_file" ]; then
+                # Compilar y instalar traducción
+                msgfmt "$po_file" -o "/app/share/locale/$lang/LC_MESSAGES/markdown-editor.mo"
+                echo "Instalada traducción para $lang"
+              fi
+            fi
+          done
+        else
+          echo "Directorio locale no encontrado"
+        fi
+    
+    sources:
+      - type: dir
+        path: .

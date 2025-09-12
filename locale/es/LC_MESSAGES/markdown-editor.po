@@ -1,0 +1,335 @@
+# Spanish translations for Markdown Editor
+# Copyright (C) 2025
+msgid ""
+msgstr ""
+"Project-Id-Version: markdown-editor 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 12:00+0000\n"
+"PO-Revision-Date: 2025-01-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Markdown Editor"
+msgstr "Editor de Markdown"
+
+msgid "New document"
+msgstr "Nuevo documento"
+
+msgid "Open file"
+msgstr "Abrir archivo"
+
+msgid "Save file"
+msgstr "Guardar archivo"
+
+msgid "Search (Ctrl+F)"
+msgstr "Buscar (Ctrl+F)"
+
+msgid "Application menu"
+msgstr "Menú de aplicación"
+
+msgid "Print..."
+msgstr "Imprimir..."
+
+msgid "Auto-detect"
+msgstr "Auto-detectar"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Preferences"
+msgstr "Preferencias"
+
+msgid "About"
+msgstr "Acerca de"
+
+msgid "Create and edit Markdown documents with real-time preview"
+msgstr "Crea y edita documentos Markdown con vista previa en tiempo real"
+
+msgid "New Document"
+msgstr "Nuevo Documento"
+
+msgid "Create a new blank Markdown document"
+msgstr "Crear un nuevo documento Markdown en blanco"
+
+msgid "Create New"
+msgstr "Crear Nuevo"
+
+msgid "Open File"
+msgstr "Abrir Archivo"
+
+msgid "Open an existing Markdown document"
+msgstr "Abrir un documento Markdown existente"
+
+msgid "You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one"
+msgstr "También puedes usar Ctrl+N para crear un nuevo archivo o Ctrl+O para abrir uno existente"
+
+msgid "Bold (Ctrl+B)"
+msgstr "Negrita (Ctrl+B)"
+
+msgid "Italic (Ctrl+I)"
+msgstr "Cursiva (Ctrl+I)"
+
+msgid "Strikethrough"
+msgstr "Tachado"
+
+msgid "Select header"
+msgstr "Seleccionar encabezado"
+
+msgid "Bullet list"
+msgstr "Lista con viñetas"
+
+msgid "Numbered list"
+msgstr "Lista numerada"
+
+msgid "Task list"
+msgstr "Lista de tareas"
+
+msgid "Quote"
+msgstr "Cita"
+
+msgid "Inline code"
+msgstr "Código en línea"
+
+msgid "Code block"
+msgstr "Bloque de código"
+
+msgid "Insert link (Ctrl+K)"
+msgstr "Insertar enlace (Ctrl+K)"
+
+msgid "Insert image"
+msgstr "Insertar imagen"
+
+msgid "Insert table"
+msgstr "Insertar tabla"
+
+msgid "Horizontal line"
+msgstr "Línea horizontal"
+
+msgid "Editor only"
+msgstr "Solo editor"
+
+msgid "Split view"
+msgstr "Vista partida"
+
+msgid "Preview only"
+msgstr "Solo vista previa"
+
+msgid "Ready"
+msgstr "Listo"
+
+msgid "Modified"
+msgstr "Modificado"
+
+msgid "Saved"
+msgstr "Guardado"
+
+msgid "lines"
+msgstr "líneas"
+
+msgid "words"
+msgstr "palabras"
+
+msgid "Line"
+msgstr "Ln"
+
+msgid "Col"
+msgstr "Col"
+
+msgid "Search in document..."
+msgstr "Buscar en el documento..."
+
+msgid "Previous"
+msgstr "Anterior"
+
+msgid "Next"
+msgstr "Siguiente"
+
+msgid "matches"
+msgstr "coincidencias"
+
+msgid "No matches"
+msgstr "Sin coincidencias"
+
+msgid "of"
+msgstr "de"
+
+msgid "_Open"
+msgstr "_Abrir"
+
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+msgid "Markdown files"
+msgstr "Archivos Markdown"
+
+msgid "All files"
+msgstr "Todos los archivos"
+
+msgid "_Save"
+msgstr "_Guardar"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Accept"
+msgstr "Aceptar"
+
+msgid "List item"
+msgstr "Elemento de lista"
+
+msgid "Task item"
+msgstr "Elemento de tarea"
+
+msgid "Header 1"
+msgstr "Encabezado 1"
+
+msgid "Header 2"
+msgstr "Encabezado 2"
+
+msgid "Header 3"
+msgstr "Encabezado 3"
+
+msgid "Cell 1"
+msgstr "Celda 1"
+
+msgid "Cell 2"
+msgstr "Celda 2"
+
+msgid "Cell 3"
+msgstr "Celda 3"
+
+msgid "Cell 4"
+msgstr "Celda 4"
+
+msgid "Cell 5"
+msgstr "Celda 5"
+
+msgid "Cell 6"
+msgstr "Celda 6"
+
+msgid "Image"
+msgstr "Imagen"
+
+msgid "General"
+msgstr "General"
+
+msgid "Interface language"
+msgstr "Idioma de la interfaz"
+
+msgid "Change application language"
+msgstr "Cambiar el idioma de la aplicación"
+
+msgid "English"
+msgstr "English"
+
+msgid "Spanish"
+msgstr "Español"
+
+msgid "Appearance"
+msgstr "Apariencia"
+
+msgid "Dark Theme"
+msgstr "Tema Oscuro"
+
+msgid "Use dark theme for the application"
+msgstr "Usar tema oscuro para la aplicación"
+
+msgid "Render style"
+msgstr "Estilo de renderizado"
+
+msgid "Preview style"
+msgstr "Estilo de vista previa"
+
+msgid "Changes the appearance of rendered content"
+msgstr "Cambia el aspecto del contenido renderizado"
+
+msgid "Default"
+msgstr "Por defecto"
+
+msgid "GitHub"
+msgstr "GitHub"
+
+msgid "GitHub Light"
+msgstr "GitHub Light"
+
+msgid "GitHub Dark"
+msgstr "GitHub Dark"
+
+msgid "GitLab"
+msgstr "GitLab"
+
+msgid "Splendor"
+msgstr "Splendor"
+
+msgid "Modest"
+msgstr "Modest"
+
+msgid "Retro"
+msgstr "Retro"
+
+msgid "Air"
+msgstr "Air"
+
+msgid "A simple and powerful Markdown editor with real-time preview"
+msgstr "Un editor de Markdown simple y potente con vista previa en tiempo real"
+
+msgid "Main Developer"
+msgstr "Desarrollador Principal"
+
+msgid "Community Contributors"
+msgstr "Colaboradores de la comunidad"
+
+msgid "Developer"
+msgstr "Desarrollador"
+
+msgid "Table of Contents"
+msgstr "Tabla de Contenidos"
+
+msgid "Advanced Markdown Editor"
+msgstr "Editor de Markdown Avanzado"
+
+msgid "Files to open"
+msgstr "Archivos a abrir"
+
+msgid "Start in Vim mode"
+msgstr "Iniciar en modo Vim"
+
+msgid "Editor theme"
+msgstr "Tema del editor"
+
+msgid "Enable auto-save with interval in seconds"
+msgstr "Habilitar auto-guardado con intervalo en segundos"
+
+msgid "Enable debug mode"
+msgstr "Habilitar modo debug"
+
+msgid "Install desktop file"
+msgstr "Instalar archivo desktop"
+
+msgid "Run tests"
+msgstr "Ejecutar tests"
+
+msgid "ERROR: Missing required dependencies."
+msgstr "ERROR: Faltan dependencias requeridas."
+
+msgid "Check the installation guide for more information."
+msgstr "Consulta la guía de instalación para más información."
+
+msgid "System integration completed."
+msgstr "Integración con el sistema completada."
+
+msgid "Application interrupted by user."
+msgstr "Aplicación interrumpida por el usuario."
+
+msgid "Fatal error in application"
+msgstr "Error fatal en la aplicación"
+
+msgid "ERROR: Python 3.6 or higher required"
+msgstr "ERROR: Se requiere Python 3.6 o superior"
+
+msgid "untitled.md"
+msgstr "sin-titulo.md"

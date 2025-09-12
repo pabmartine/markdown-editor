@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Markdown Editor
+Comment=A modern, feature-rich task management application built with Python and GTK 4, designed for productivity and ease of use.
+Exec=markdown-editor
+Icon=com.pabmartine.MarkdownEditor
+Terminal=false
+Categories=Utility;

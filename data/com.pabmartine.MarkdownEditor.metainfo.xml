@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.pabmartine.MarkdownEditor</id>
+  
+  <name>Markdown Editor</name>
+  <summary>A powerful Markdown editor with real-time preview</summary>
+  
+  <description>
+    <p>
+      Markdown Editor is a modern, feature-rich application for creating and editing Markdown documents.
+      It provides a clean interface with real-time preview, multiple rendering styles, and comprehensive
+      formatting tools.
+    </p>
+    <p>Features include:</p>
+    <ul>
+      <li>Real-time Markdown preview with multiple themes</li>
+      <li>Split-pane editing with synchronized scrolling</li>
+      <li>Comprehensive formatting toolbar</li>
+      <li>Search and replace functionality</li>
+      <li>Multiple preview styles (GitHub, GitLab, and more)</li>
+      <li>Dark and light theme support</li>
+      <li>Multi-language support (English and Spanish)</li>
+    </ul>
+  </description>
+  
+  <launchable type="desktop-id">com.pabmartine.MarkdownEditor.desktop</launchable>
+  
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/pabmartine/markdown-editor/main/screenshots/main.png</image>
+      <caption>Main editor interface with split-pane view</caption>
+    </screenshot>
+  </screenshots>
+  
+  <url type="homepage">https://github.com/pabmartine/markdown-editor</url>
+  <url type="bugtracker">https://github.com/pabmartine/markdown-editor/issues</url>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+  
+  <categories>
+    <category>Office</category>
+    <category>TextEditor</category>
+  </categories>
+  
+  <keywords>
+    <keyword>markdown</keyword>
+    <keyword>editor</keyword>
+    <keyword>text</keyword>
+    <keyword>document</keyword>
+    <keyword>writing</keyword>
+  </keywords>
+  
+  <provides>
+    <binary>markdown-editor</binary>
+  </provides>
+  
+  <releases>
+    <release version="1.0.0" date="2025-01-15">
+      <description>
+        <p>Initial release of Markdown Editor</p>
+        <ul>
+          <li>Real-time Markdown preview</li>
+          <li>Multiple rendering themes</li>
+          <li>Internationalization support</li>
+          <li>Dark/light theme toggle</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+  
+  <content_rating type="oars-1.1" />
+</component>
