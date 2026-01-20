@@ -65,6 +65,16 @@
   </provides>
   
   <releases>
+    <release version="1.1.0" date="2026-01-20">
+      <description>
+        <p>Update 1.1.0: Bug fixes and improvements</p>
+        <ul>
+          <li>Fixed preview rendering issues with unclosed tags</li>
+          <li>Fixed window styling and titlebar handling for better Adwaita integration</li>
+          <li>Restored original icon set for view controls</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.0" date="2025-01-15">
       <description>
         <p>Initial release of Markdown Editor</p>

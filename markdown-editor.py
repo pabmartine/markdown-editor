@@ -381,6 +381,9 @@ class ImprovedRenderer:
                 else:
                     result.append('')
         
+        if in_code_block:
+            result.append('</span>')
+        
         return '\n'.join(result)
     
     def _process_inline_format(self, text):
@@ -437,6 +440,9 @@ class GitHubRenderer(ImprovedRenderer):
                 else:
                     result.append('')
         
+        if in_code_block:
+            result.append('</span>')
+        
         return '\n'.join(result)
     
     def _process_inline_format_github(self, text):
@@ -488,6 +494,9 @@ class GitHubLightRenderer(ImprovedRenderer):
                     result.append(processed)
                 else:
                     result.append('')
+        
+        if in_code_block:
+            result.append('</span>')
         
         return '\n'.join(result)
     
@@ -541,6 +550,9 @@ class GitHubDarkRenderer(ImprovedRenderer):
                 else:
                     result.append('')
         
+        if in_code_block:
+            result.append('</span>')
+        
         return '\n'.join(result)
     
     def _process_inline_format_github_dark(self, text):
@@ -592,6 +604,9 @@ class GitLabRenderer(ImprovedRenderer):
                     result.append(processed)
                 else:
                     result.append('')
+        
+        if in_code_block:
+            result.append('</span>')
         
         return '\n'.join(result)
     
@@ -645,6 +660,9 @@ class SplendorRenderer(ImprovedRenderer):
                 else:
                     result.append('')
         
+        if in_code_block:
+            result.append('</span>')
+        
         return '\n'.join(result)
     
     def _process_inline_format_splendor(self, text):
@@ -695,6 +713,9 @@ class ModestRenderer(ImprovedRenderer):
                     result.append(processed)
                 else:
                     result.append('')
+        
+        if in_code_block:
+            result.append('</span>')
         
         return '\n'.join(result)
     
@@ -748,6 +769,9 @@ class RetroRenderer(ImprovedRenderer):
                 else:
                     result.append('')
         
+        if in_code_block:
+            result.append('</span>')
+        
         return '\n'.join(result)
     
     def _process_inline_format_retro(self, text):
@@ -800,6 +824,9 @@ class AirRenderer(ImprovedRenderer):
                     result.append(processed)
                 else:
                     result.append('')
+        
+        if in_code_block:
+            result.append('</span>')
         
         return '\n'.join(result)
     
@@ -1515,48 +1542,51 @@ class EditorActionsMixin:
             return
             
         try:
-            if hasattr(self, 'split_view_btn'):
-                self.split_view_btn.remove_css_class("view-btn-active")
-            if hasattr(self, 'editor_view_btn'):
-                self.editor_view_btn.remove_css_class("view-btn-active")
-            if hasattr(self, 'preview_view_btn'):
-                self.preview_view_btn.remove_css_class("view-btn-active")
+            # Update buttons style
+            for btn_name in ['split_view_btn', 'editor_view_btn', 'preview_view_btn']:
+                if hasattr(self, btn_name):
+                    getattr(self, btn_name).remove_css_class("view-btn-active")
             
             editor_widget = self.paned.get_start_child()
             preview_widget = self.paned.get_end_child()
             
             if mode == "split":
-                if editor_widget:
+                if editor_widget: 
                     editor_widget.set_visible(True)
-                if preview_widget:
+                if preview_widget: 
                     preview_widget.set_visible(True)
-                self.paned.set_position(500)
+                
+                # Try to restore a reasonable position
+                width = self.get_width() if hasattr(self, 'get_width') else 1000
+                current_pos = self.paned.get_position()
+                if current_pos <= 50 or current_pos >= width - 50:
+                    self.paned.set_position(int(width / 2))
+                
                 if hasattr(self, 'split_view_btn'):
                     self.split_view_btn.add_css_class("view-btn-active")
                     
             elif mode == "editor":
-                if editor_widget:
+                if editor_widget: 
                     editor_widget.set_visible(True)
-                if preview_widget:
+                if preview_widget: 
                     preview_widget.set_visible(False)
                 if hasattr(self, 'editor_view_btn'):
                     self.editor_view_btn.add_css_class("view-btn-active")
                     
             elif mode == "preview":
-                if editor_widget:
+                if editor_widget: 
                     editor_widget.set_visible(False)
-                if preview_widget:
+                if preview_widget: 
                     preview_widget.set_visible(True)
                 if hasattr(self, 'preview_view_btn'):
                     self.preview_view_btn.add_css_class("view-btn-active")
             
-            if hasattr(self, 'current_view_mode'):
-                self.current_view_mode = mode
+            self.current_view_mode = mode
                 
         except Exception as e:
             print(f"Error changing view mode: {e}")
 
-class MarkdownEditorWindow(Gtk.ApplicationWindow, ScrollSyncMixin, SearchMixin, 
+class MarkdownEditorWindow(Adw.ApplicationWindow, ScrollSyncMixin, SearchMixin, 
                           FileOperationsMixin, EditorActionsMixin):
     def __init__(self, **kwargs):
         try:
@@ -1747,9 +1777,13 @@ class MarkdownEditorWindow(Gtk.ApplicationWindow, ScrollSyncMixin, SearchMixin,
             
             self.setup_menu_button(header_bar)
             
-            self.set_titlebar(header_bar)
+            # Create a vertical box for the main content
+            main_content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            main_content_box.append(header_bar)
             
-            self.setup_main_layout()
+            self.set_content(main_content_box)
+            
+            self.setup_main_layout(main_content_box)
             
             self.apply_css()
             
@@ -1782,7 +1816,7 @@ class MarkdownEditorWindow(Gtk.ApplicationWindow, ScrollSyncMixin, SearchMixin,
         menu_button.set_menu_model(menu_model)
         header_bar.pack_end(menu_button)
 
-    def setup_main_layout(self):
+    def setup_main_layout(self, parent_box):
         overlay = Gtk.Overlay()
         
         self.content_stack = Gtk.Stack()
@@ -1795,7 +1829,12 @@ class MarkdownEditorWindow(Gtk.ApplicationWindow, ScrollSyncMixin, SearchMixin,
         self.content_stack.add_named(self.editor_area, "editor")
         
         overlay.set_child(self.content_stack)
-        self.set_child(overlay)
+        
+        # Make the overlay expand to fill available space
+        overlay.set_hexpand(True)
+        overlay.set_vexpand(True)
+        
+        parent_box.append(overlay)
 
     def create_welcome_page(self):
         welcome_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -2043,16 +2082,16 @@ class MarkdownEditorWindow(Gtk.ApplicationWindow, ScrollSyncMixin, SearchMixin,
             btn.set_size_request(18, 18)
             return btn
         
-        self.editor_view_btn = create_view_button("panel-left-symbolic", _("Editor only"))
+        self.editor_view_btn = create_view_button("sidebar-collapse-left-symbolic", _("Editor only"))
         self.editor_view_btn.connect("clicked", lambda x: self.set_view_mode("editor"))
         view_buttons_box.append(self.editor_view_btn)
 
-        self.split_view_btn = create_view_button("panel-center-symbolic", _("Split view"))
+        self.split_view_btn = create_view_button("page-2sides-symbolic", _("Split view"))
         self.split_view_btn.connect("clicked", lambda x: self.set_view_mode("split"))
         self.split_view_btn.add_css_class("view-btn-active")
         view_buttons_box.append(self.split_view_btn)
                     
-        self.preview_view_btn = create_view_button("panel-right-symbolic", _("Preview only"))
+        self.preview_view_btn = create_view_button("sidebar-collapse-right-symbolic", _("Preview only"))
         self.preview_view_btn.connect("clicked", lambda x: self.set_view_mode("preview"))
         view_buttons_box.append(self.preview_view_btn)
         
@@ -2622,7 +2661,7 @@ class MarkdownApp(Adw.Application):
         about_dialog.set_application_icon("text-markdown-symbolic")
         
         about_dialog.set_application_name(_("Markdown Editor"))
-        about_dialog.set_version("1.0.0")
+        about_dialog.set_version("1.1.0")
         about_dialog.set_developer_name(_("Developer"))
         about_dialog.set_copyright("© 2025")
         about_dialog.set_comments(
@@ -2914,7 +2953,7 @@ def parse_command_line_args():
                        help=_('Editor theme'))
     parser.add_argument('--auto-save', type=int, metavar='SECONDS',
                        help=_('Enable auto-save with interval in seconds'))
-    parser.add_argument('--version', action='version', version='1.0.0')
+    parser.add_argument('--version', action='version', version='1.1.0')
     parser.add_argument('--debug', action='store_true', help=_('Enable debug mode'))
     parser.add_argument('--install-desktop', action='store_true', help=_('Install desktop file'))
     parser.add_argument('--test', action='store_true', help=_('Run tests'))
@@ -2966,20 +3005,6 @@ def main_complete():
         app = MarkdownApp()
         if hasattr(args, 'files'):
             apply_cli_options(app, args)
-        result = app.run(sys.argv)
-        return result
-        
-    except KeyboardInterrupt:
-        print(f"\n{_('Application interrupted by user.')}")
-        return 0
-    except Exception as e:
-        print(f"{_('Fatal error in application')}: {e}")
-        traceback.print_exc()
-        return 1
-
-def main():
-    try:
-        app = MarkdownApp()
         result = app.run(sys.argv)
         return result
         

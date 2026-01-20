@@ -1,0 +1,11 @@
+<span size="24000" weight="bold">Header</span>
+Text with <b>bold</b> and <i>italic</i>.
+• Item 1
+• Item 2
+
+<span style="italic" foreground="#666666">" Quote "</span>
+
+<span font_family="monospace" background="#e3e3e3">
+Code block
+
+</span>
