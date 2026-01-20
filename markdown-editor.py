@@ -150,6 +150,9 @@ class Config:
         self.save_config()
 
 class ImprovedRenderer:
+    def __init__(self):
+        self.style = "default"
+
     def render_text(self, markdown_text):
         try:
             if MARKDOWN_AVAILABLE:
@@ -168,7 +171,7 @@ class ImprovedRenderer:
     
     def _html_to_pango(self, html):
         class HTMLToPangoParser(HTMLParser):
-            def __init__(self):
+            def __init__(self, style):
                 super().__init__()
                 self.output = []
                 self.tag_stack = []
@@ -176,49 +179,205 @@ class ImprovedRenderer:
                 self.in_code_block = False
                 self.table_column = 0
                 self.in_heading_level = None
-                
+                self.style = style
+                self.pending_li_content = None
+
+            def flush_pending_li(self):
+                if self.pending_li_content:
+                    indent, btype = self.pending_li_content
+                    bullet = "• " if btype == 'ul' else "1. "
+                    
+                    if self.style == "github" or self.style == "github-light":
+                        bullet = f'<span foreground="#1f2328">{bullet}</span>'
+                    elif self.style == "github-dark":
+                        bullet = f'<span foreground="#f0f6fc">{bullet}</span>'
+                    elif self.style == "gitlab":
+                        bullet = f'<span foreground="#303030">{bullet}</span>'
+                    elif self.style == "splendor":
+                        bullet = f'<span foreground="#2c3e50">{bullet}</span>'
+                    elif self.style == "modest":
+                        bullet = f'<span foreground="#333">{bullet}</span>'
+                    elif self.style == "retro":
+                        bullet = f'<span foreground="#8b4513">{bullet}</span>'
+                    elif self.style == "air":
+                        bullet = f'<span foreground="#268bd2">{bullet}</span>'
+                        
+                    self.output.append(f'{indent}{bullet}')
+                    self.pending_li_content = None
+
             def handle_starttag(self, tag, attrs):
+                if tag != 'li':
+                    self.flush_pending_li()
+                    
                 self.tag_stack.append(tag)
                 
                 if tag == 'h1':
                     self.in_heading_level = 1
-                    self.output.append('\n<span size="24000" weight="bold">')
+                    if self.style == "github":
+                        self.output.append('\n<span size="28000" weight="bold" foreground="#1f2328">')
+                    elif self.style == "github-light":
+                        self.output.append('\n<span size="32000" weight="600" foreground="#1f2328">')
+                    elif self.style == "github-dark":
+                        self.output.append('\n<span size="32000" weight="600" foreground="#f0f6fc">')
+                    elif self.style == "gitlab":
+                        self.output.append('\n<span size="28000" weight="bold" foreground="#303030">')
+                    elif self.style == "splendor":
+                        self.output.append('\n<span size="36000" weight="300" foreground="#2c3e50">')
+                    elif self.style == "modest":
+                        self.output.append('\n<span size="28000" weight="bold" foreground="#333">')
+                    elif self.style == "retro":
+                        self.output.append('\n<span size="30000" weight="bold" foreground="#8b4513">')
+                    elif self.style == "air":
+                        self.output.append('\n<span size="32000" weight="300" foreground="#2aa198">')
+                    else:
+                        self.output.append('\n<span size="24000" weight="bold">')
                 elif tag == 'h2':
                     self.in_heading_level = 2
-                    self.output.append('\n<span size="20000" weight="bold">')
+                    if self.style == "github":
+                        self.output.append('\n<span size="24000" weight="bold" foreground="#1f2328">')
+                    elif self.style == "github-light":
+                        self.output.append('\n<span size="26000" weight="600" foreground="#1f2328">')
+                    elif self.style == "github-dark":
+                        self.output.append('\n<span size="26000" weight="600" foreground="#f0f6fc">')
+                    elif self.style == "gitlab":
+                        self.output.append('\n<span size="24000" weight="bold" foreground="#303030">')
+                    elif self.style == "splendor":
+                        self.output.append('\n<span size="28000" weight="400" foreground="#34495e">')
+                    elif self.style == "modest":
+                        self.output.append('\n<span size="24000" weight="bold" foreground="#444">')
+                    elif self.style == "retro":
+                        self.output.append('\n<span size="26000" weight="bold" foreground="#a0522d">')
+                    elif self.style == "air":
+                        self.output.append('\n<span size="26000" weight="400" foreground="#268bd2">')
+                    else:
+                        self.output.append('\n<span size="20000" weight="bold">')
                 elif tag == 'h3':
                     self.in_heading_level = 3
-                    self.output.append('\n<span size="18000" weight="bold">')
+                    size = "20000" if self.style == "github" else "19000" if self.style == "gitlab" else "18000"
+                    self.output.append(f'\n<span size="{size}" weight="bold">')
                 elif tag == 'h4':
                     self.in_heading_level = 4
-                    self.output.append('\n<span size="16000" weight="bold">')
+                    size = "18000" if self.style == "github" else "17000" if self.style == "gitlab" else "16000"
+                    self.output.append(f'\n<span size="{size}" weight="bold">')
                 elif tag == 'h5':
                     self.in_heading_level = 5
-                    self.output.append('\n<span size="14000" weight="bold">')
+                    size = "16000" if self.style == "github" else "15000" if self.style == "gitlab" else "14000"
+                    self.output.append(f'\n<span size="{size}" weight="bold">')
                 elif tag == 'h6':
                     self.in_heading_level = 6
-                    self.output.append('\n<span size="12000" weight="bold">')
+                    size = "14000" if self.style == "github" else "13000" if self.style == "gitlab" else "12000"
+                    self.output.append(f'\n<span size="{size}" weight="bold">')
                 elif tag == 'strong' or tag == 'b':
-                    self.output.append('<b>')
+                    if self.style == "github" or self.style == "github-light":
+                        self.output.append('<span weight="bold" foreground="#1f2328">')
+                    elif self.style == "github-dark":
+                        self.output.append('<span weight="600" foreground="#f0f6fc">')
+                    elif self.style == "gitlab":
+                        self.output.append('<span weight="bold" foreground="#303030">')
+                    elif self.style == "splendor":
+                        self.output.append('<span weight="600" foreground="#2c3e50">')
+                    elif self.style == "modest":
+                        self.output.append('<span weight="bold" foreground="#333">')
+                    elif self.style == "retro":
+                        self.output.append('<span weight="bold" foreground="#8b4513">')
+                    elif self.style == "air":
+                        self.output.append('<span weight="600" foreground="#2aa198">')
+                    else:
+                        self.output.append('<b>')
                 elif tag == 'em' or tag == 'i':
-                    self.output.append('<i>')
+                    if self.style == "github" or self.style == "github-light":
+                        self.output.append('<span style="italic" foreground="#656d76">')
+                    elif self.style == "github-dark":
+                        self.output.append('<span style="italic" foreground="#8b949e">')
+                    elif self.style == "gitlab":
+                        self.output.append('<span style="italic" foreground="#525252">')
+                    elif self.style == "splendor":
+                        self.output.append('<span style="italic" foreground="#7f8c8d">')
+                    elif self.style == "modest":
+                        self.output.append('<span style="italic" foreground="#666">')
+                    elif self.style == "retro":
+                        self.output.append('<span style="italic" foreground="#8b7355">')
+                    elif self.style == "air":
+                        self.output.append('<span style="italic" foreground="#586e75">')
+                    else:
+                        self.output.append('<i>')
                 elif tag == 'u':
                     self.output.append('<u>')
                 elif tag == 'code':
                     if not self.in_code_block:
-                        self.output.append('<span font_family="monospace" background="#e0e0e0">')
+                        if self.style == "github":
+                            self.output.append('<span font_family="monospace" background="#f6f8fa" foreground="#d1242f" size="small"> ')
+                        elif self.style == "github-light":
+                            self.output.append('<span font_family="monospace" background="#afb8c133" foreground="#d1242f" size="small"> ')
+                        elif self.style == "github-dark":
+                            self.output.append('<span font_family="monospace" background="#6e768166" foreground="#ff7b72" size="small"> ')
+                        elif self.style == "gitlab":
+                            self.output.append('<span font_family="monospace" background="#fdf2f2" foreground="#c73e1d" size="small"> ')
+                        elif self.style == "splendor":
+                            self.output.append('<span font_family="monospace" background="#ecf0f1" foreground="#e74c3c" size="small"> ')
+                        elif self.style == "modest":
+                            self.output.append('<span font_family="monospace" background="#f5f5f5" foreground="#d14" size="small"> ')
+                        elif self.style == "retro":
+                            self.output.append('<span font_family="monospace" background="#eee8d5" foreground="#b58900" size="small"> ')
+                        elif self.style == "air":
+                            self.output.append('<span font_family="monospace" background="#eee8d5" foreground="#cb4b16" size="small"> ')
+                        else:
+                            self.output.append('<span font_family="monospace" background="#e0e0e0">')
                 elif tag == 'pre':
                     self.in_code_block = True
-                    self.output.append('\n<span font_family="monospace" background="#e3e3e3">')
+                    if self.style == "github":
+                        self.output.append('\n<span font_family="monospace" background="#f6f8fa" foreground="#24292f">')
+                    elif self.style == "github-light":
+                        self.output.append('\n<span font_family="monospace" background="#f6f8fa" foreground="#24292f">')
+                    elif self.style == "github-dark":
+                        self.output.append('\n<span font_family="monospace" background="#161b22" foreground="#e6edf3">')
+                    elif self.style == "gitlab":
+                        self.output.append('\n<span font_family="monospace" background="#fbfafd" foreground="#303030">')
+                    elif self.style == "splendor":
+                        self.output.append('\n<span font_family="monospace" background="#fafafa" foreground="#333">')
+                    elif self.style == "modest":
+                        self.output.append('\n<span font_family="monospace" background="#f5f5f5" foreground="#333">')
+                    elif self.style == "retro":
+                        self.output.append('\n<span font_family="monospace" background="#eee8d5" foreground="#657b83">')
+                    elif self.style == "air":
+                        self.output.append('\n<span font_family="monospace" background="#fafafa" foreground="#586e75">')
+                    else:
+                        self.output.append('\n<span font_family="monospace" background="#e3e3e3">')
                 elif tag == 'p':
                     if self.output and not self.output[-1].endswith('\n'):
                         self.output.append('\n')
                 elif tag == 'br':
                     self.output.append('\n')
                 elif tag == 'hr':
-                    self.output.append('\n' + '─' * 50 + '\n')
+                    if self.style == "github" or self.style == "github-light":
+                        self.output.append('\n<span foreground="#d1d9e0">' + '─' * 50 + '</span>\n')
+                    elif self.style == "github-dark":
+                        self.output.append('\n<span foreground="#30363d">' + '─' * 60 + '</span>\n')
+                    elif self.style == "gitlab":
+                        self.output.append('\n<span foreground="#6b4fbb">' + '─' * 60 + '</span>\n')
+                    elif self.style == "splendor":
+                        self.output.append('\n<span foreground="#bdc3c7">' + '╌' * 50 + '</span>\n')
+                    elif self.style == "retro":
+                        self.output.append('\n<span foreground="#cd853f">' + '╌' * 50 + '</span>\n')
+                    else:
+                        self.output.append('\n' + '─' * 50 + '\n')
                 elif tag == 'blockquote':
-                    self.output.append('\n<span style="italic" foreground="#666666">" ')
+                    if self.style == "github" or self.style == "github-light":
+                        self.output.append('\n<span style="italic" foreground="#656d76" background="#f6f8fa">▎ ')
+                    elif self.style == "github-dark":
+                        self.output.append('\n<span style="italic" foreground="#8b949e" background="#161b22">▎ ')
+                    elif self.style == "gitlab":
+                        self.output.append('\n<span style="italic" foreground="#6b4fbb" background="#fbfafd">▎ ')
+                    elif self.style == "splendor":
+                        self.output.append('\n<span style="italic" foreground="#7f8c8d" background="#ecf0f1">" ')
+                    elif self.style == "modest":
+                        self.output.append('\n<span style="italic" foreground="#777" background="#f9f9f9">│ ')
+                    elif self.style == "retro":
+                        self.output.append('\n<span style="italic" foreground="#8b7355" background="#f5f5dc">▌ ')
+                    elif self.style == "air":
+                        self.output.append('\n<span style="italic" foreground="#93a1a1" background="#fdf6e3">  ')
+                    else:
+                        self.output.append('\n<span style="italic" foreground="#666666">" ')
                 elif tag == 'ul':
                     self.list_level += 1
                     self.output.append('\n')
@@ -227,17 +386,29 @@ class ImprovedRenderer:
                     self.output.append('\n')
                 elif tag == 'li':
                     indent = '  ' * (self.list_level - 1)
-                    parent_tag = self.tag_stack[-2] if len(self.tag_stack) > 1 else None
-                    if parent_tag == 'ul':
-                        self.output.append(f'{indent}• ')
-                    elif parent_tag == 'ol':
-                        self.output.append(f'{indent}1. ')
-                    else:
-                        self.output.append(f'{indent}• ')
+                    parent = self.tag_stack[-2] if len(self.tag_stack) > 1 else None
+                    btype = 'ul'
+                    if parent == 'ol': btype = 'ol'
+                    self.pending_li_content = (indent, btype)
                 elif tag == 'del' or tag == 's':
                     self.output.append('<s>')
                 elif tag == 'a':
-                    self.output.append('<span foreground="blue" underline="single">')
+                    if self.style == "github" or self.style == "github-light":
+                        self.output.append('<span foreground="#0969da" underline="single">')
+                    elif self.style == "github-dark":
+                        self.output.append('<span foreground="#58a6ff" underline="single">')
+                    elif self.style == "gitlab":
+                        self.output.append('<span foreground="#1f75cb" underline="single" weight="medium">')
+                    elif self.style == "splendor":
+                        self.output.append('<span foreground="#3498db" underline="single">')
+                    elif self.style == "modest":
+                        self.output.append('<span foreground="#337ab7" underline="single">')
+                    elif self.style == "retro":
+                        self.output.append('<span foreground="#268bd2" underline="single">')
+                    elif self.style == "air":
+                        self.output.append('<span foreground="#268bd2" underline="single">')
+                    else:
+                        self.output.append('<span foreground="blue" underline="single">')
                 elif tag == 'img':
                     alt = next((value for name, value in attrs if name == 'alt'), _('Image'))
                     self.output.append(f'\n🖼️ [{_("Image")}: {alt}]\n')
@@ -254,26 +425,46 @@ class ImprovedRenderer:
                         self.output.append('<b>')
 
             def handle_endtag(self, tag):
+                self.flush_pending_li()
+                
                 if self.tag_stack and self.tag_stack[-1] == tag:
                     self.tag_stack.pop()
                 
                 if tag in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
                     self.output.append('</span>\n')
                     if self.in_heading_level == 1:
-                        self.output.append('<span foreground="#c9c9c9">' + '─' * 60 + '</span>\n')
+                        if self.style == "github":
+                            self.output.append('<span foreground="#d0d7de">' + '─' * 60 + '</span>\n')
+                        elif self.style == "gitlab":
+                            self.output.append('<span foreground="#c9c9c9">' + '─' * 60 + '</span>\n')
+                        else:
+                            self.output.append('<span foreground="#c9c9c9">' + '─' * 60 + '</span>\n')
                     elif self.in_heading_level == 2:
-                        self.output.append('<span foreground="#d8d8d8">' + '─' * 50 + '</span>\n')
+                        if self.style == "github":
+                            self.output.append('<span foreground="#d8d8d8">' + '─' * 50 + '</span>\n')
+                        elif self.style == "gitlab":
+                            self.output.append('<span foreground="#d8d8d8">' + '─' * 50 + '</span>\n')
+                        else:
+                            self.output.append('<span foreground="#d8d8d8">' + '─' * 50 + '</span>\n')
                     self.in_heading_level = None
                 elif tag == 'strong' or tag == 'b':
-                    self.output.append('</b>')
+                    if self.style == "default":
+                        self.output.append('</b>')
+                    else:
+                        self.output.append('</span>')
                 elif tag == 'em' or tag == 'i':
-                    self.output.append('</i>')
+                    if self.style == "default":
+                        self.output.append('</i>')
+                    else:
+                        self.output.append('</span>')
                 elif tag == 'u':
                     self.output.append('</u>')
                 elif tag == 'del' or tag == 's':
                     self.output.append('</s>')
                 elif tag == 'code':
                     if not self.in_code_block:
+                        self.output.append(' </span>')
+                    else:
                         self.output.append('</span>')
                 elif tag == 'pre':
                     self.in_code_block = False
@@ -281,7 +472,7 @@ class ImprovedRenderer:
                 elif tag == 'p':
                     self.output.append('\n')
                 elif tag == 'blockquote':
-                    self.output.append(' "</span>\n')
+                    self.output.append(' "</span>\n' if self.style == "default" else '</span>\n')
                 elif tag == 'ul' or tag == 'ol':
                     self.list_level -= 1
                     self.output.append('\n')
@@ -295,17 +486,69 @@ class ImprovedRenderer:
                     self.output.append('</b>')
                 
             def handle_data(self, data):
+                if self.pending_li_content:
+                    match = re.match(r'^(\s*)\[([ xX])\]\s+(.*)', data)
+                    if not match:
+                        match = re.match(r'^(\s*)\[([ xX])\]$', data)
+                        
+                    if match:
+                        indent, _ = self.pending_li_content
+                        is_checked = match.group(2).lower() == 'x'
+                        
+                        checkbox = "☑ " if is_checked else "☐ "
+                        
+                        if self.style == "github" or self.style == "github-light":
+                            checkbox = f'<span foreground="#1f2328">{checkbox}</span>'
+                        elif self.style == "github-dark":
+                            checkbox = f'<span foreground="#f0f6fc">{checkbox}</span>'
+                        elif self.style == "gitlab":
+                            checkbox = f'<span foreground="#303030">{checkbox}</span>'
+                        elif self.style == "splendor":
+                            checkbox = f'<span foreground="#2c3e50">{checkbox}</span>'
+                        elif self.style == "modest":
+                            checkbox = f'<span foreground="#333">{checkbox}</span>'
+                        elif self.style == "retro":
+                            checkbox = f'<span foreground="#8b4513">{checkbox}</span>'
+                        elif self.style == "air":
+                            checkbox = f'<span foreground="#268bd2">{checkbox}</span>'
+                            
+                        self.output.append(f'{indent}{checkbox}')
+                        
+                        data = data[match.end():]
+                        if match.lastindex >= 3:
+                            data = match.group(3) or ""
+                            
+                        # First escape data before wrapping in tags
+                        data = data.replace('&', '&amp;')
+                        data = data.replace('<', '&lt;')
+                        data = data.replace('>', '&gt;')
+                        
+                        if is_checked:
+                            data = f"<s>{data}</s>"
+                            
+                        self.output.append(data)
+                        self.pending_li_content = None
+                        return
+                    else:
+                        self.flush_pending_li()
+                
+                # First escape XML characters
                 data = data.replace('&', '&amp;')
                 data = data.replace('<', '&lt;')
                 data = data.replace('>', '&gt;')
+                
+                # Then process strikethrough (after escaping)
+                data = re.sub(r'~~([^~]+?)~~', r'<s>\1</s>', data)
+                
                 self.output.append(data)
                 
             def get_pango(self):
+                self.flush_pending_li()
                 result = ''.join(self.output)
                 result = re.sub(r'\n{3,}', '\n\n', result)
                 return result.strip()
         
-        parser = HTMLToPangoParser()
+        parser = HTMLToPangoParser(self.style)
         parser.feed(html)
         return parser.get_pango()
     
@@ -401,6 +644,10 @@ class ImprovedRenderer:
         return processed
 
 class GitHubRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "github"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []
@@ -456,6 +703,10 @@ class GitHubRenderer(ImprovedRenderer):
         return processed
 
 class GitHubLightRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "github-light"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []
@@ -511,6 +762,10 @@ class GitHubLightRenderer(ImprovedRenderer):
         return processed
 
 class GitHubDarkRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "github-dark"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []
@@ -566,6 +821,10 @@ class GitHubDarkRenderer(ImprovedRenderer):
         return processed
 
 class GitLabRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "gitlab"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []
@@ -621,6 +880,10 @@ class GitLabRenderer(ImprovedRenderer):
         return processed
 
 class SplendorRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "splendor"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []
@@ -676,6 +939,10 @@ class SplendorRenderer(ImprovedRenderer):
         return processed
 
 class ModestRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "modest"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []
@@ -730,6 +997,10 @@ class ModestRenderer(ImprovedRenderer):
         return processed
 
 class RetroRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "retro"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []
@@ -785,6 +1056,10 @@ class RetroRenderer(ImprovedRenderer):
         return processed
 
 class AirRenderer(ImprovedRenderer):
+    def __init__(self):
+        super().__init__()
+        self.style = "air"
+
     def _basic_render(self, text):
         lines = text.split('\n')
         result = []

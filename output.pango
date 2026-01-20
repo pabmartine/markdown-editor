@@ -1,11 +1,28 @@
-<span size="24000" weight="bold">Header</span>
-Text with <b>bold</b> and <i>italic</i>.
-• Item 1
-• Item 2
+<span size="28000" weight="bold" foreground="#1f2328">Header 1</span>
+<span foreground="#d0d7de">────────────────────────────────────────────────────────────</span>
 
-<span style="italic" foreground="#666666">" Quote "</span>
+        
+Text with <span weight="bold" foreground="#1f2328">bold</span> and <span style="italic" foreground="#656d76">italic</span>.
 
-<span font_family="monospace" background="#e3e3e3">
-Code block
+        
+Text with <s>strikethrough</s>.
 
-</span>
+        
+
+        • Item 1
+
+        • Item 2
+
+        
+
+        
+
+        1. Ordered 1
+
+        
+
+        Code block
+
+        
+        
+Quote
