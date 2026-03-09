@@ -1,21 +1,5 @@
 #!/bin/bash
 
-# Script para compilar archivos .po a .mo (archivos binarios que usa gettext)
+set -e
 
-echo "Compilando archivos de traducción..."
-
-# Compilar traducciones para cada idioma
-for lang in en es; do
-    if [ -f "locale/$lang/LC_MESSAGES/markdown-editor.po" ]; then
-        msgfmt "locale/$lang/LC_MESSAGES/markdown-editor.po" \
-               -o "locale/$lang/LC_MESSAGES/markdown-editor.mo"
-        echo "Traducción compilada para: $lang"
-    else
-        echo "Archivo .po no encontrado para idioma: $lang"
-    fi
-done
-
-echo "Compilación completada."
-echo ""
-echo "Archivos creados:"
-find locale -name "*.mo" -exec ls -la {} \;
+exec "$(dirname "$0")/scripts/compile_translations.sh" "$@"

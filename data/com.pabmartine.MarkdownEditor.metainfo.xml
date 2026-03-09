@@ -17,9 +17,10 @@
       <li>Split-pane editing with synchronized scrolling</li>
       <li>Comprehensive formatting toolbar</li>
       <li>Search and replace functionality</li>
-      <li>Multiple preview styles (GitHub, GitLab, and more)</li>
+      <li>Multiple preview styles including Slate, Ivory, Nocturne and Ember</li>
       <li>Dark and light theme support</li>
       <li>Multi-language support (English and Spanish)</li>
+      <li>Outline navigation, search and replace, session recovery and export</li>
     </ul>
   </description>
   
@@ -65,6 +66,18 @@
   </provides>
   
   <releases>
+    <release version="1.2.0" date="2026-03-08">
+      <description>
+        <p>Update 1.2.0: editor workflow, preview and UI improvements</p>
+        <ul>
+          <li>Reworked project structure into a cleaner package layout</li>
+          <li>Added outline navigation, recent files, search and replace, and richer preview blocks</li>
+          <li>Added session recovery, autosave recovery, HTML/PDF export and editor preferences</li>
+          <li>Improved GNOME/libadwaita alignment in the main window and menus</li>
+          <li>Added new preview styles: Slate, Ivory, Nocturne and Ember</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.1.0" date="2026-01-20">
       <description>
         <p>Update 1.1.0: Bug fixes and improvements</p>

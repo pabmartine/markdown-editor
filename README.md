@@ -1,19 +1,22 @@
 # Markdown Editor
 
-A simple and powerful Markdown editor with real-time preview, built with GTK4 and Adwaita.
+A GTK4/libadwaita Markdown editor with embedded HTML preview, split editing and a native GNOME-style interface.
 
 ![Markdown Editor Screenshot](images/snapshot.png)
 
 ## Features
 
-- **Real-time preview** with scroll synchronization
-- **Multiple rendering styles** (GitHub, GitLab, Splendor, Air, etc.)
+- **Embedded HTML preview** rendered with WebKitGTK and synchronized with the editor
+- **Distinct preview styles** (`Default`, `Slate`, `Ivory`, `Nocturne`, `Ember`, `Splendor`, `Modest`, `Retro`, `Air`)
 - **Modern interface** using GTK4 and Adwaita
 - **Multi-language support** (Spanish, English)
-- **Document search** with highlighting
+- **Search and replace**
 - **Complete toolbar** for Markdown formatting
 - **Keyboard shortcuts** for common actions
 - **Adaptive view** (editor only, preview only, split view)
+- **Outline panel** for heading navigation
+- **Open recent**, drag and drop, and session recovery
+- **HTML/PDF export and printing** based on the rendered preview
 - **Light/dark theme**
 
 ## Installation
@@ -30,31 +33,50 @@ flatpak-builder build-dir com.pabmartine.MarkdownEditor.yml --install --user
 
 ### From source code
 
-#### Dependencies
+#### Required dependencies
+
+The application needs all of the following for a normal desktop run:
+
+- Python 3
+- PyGObject bindings for GTK4
+- GTK 4
+- libadwaita
+- WebKitGTK for GTK4
+- `markdown-it-py`
+
+Without `WebKitGTK`, the embedded preview cannot render.
+Without `markdown-it-py`, Markdown rendering falls back to a reduced path.
+
+#### Install required dependencies
 
 **Ubuntu/Debian:**
 ```bash
-sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1
-sudo apt install python3-markdown  # Optional, for advanced rendering
+sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-webkit-6.0
+python3 -m pip install markdown-it-py
 ```
 
 **Fedora:**
 ```bash
-sudo dnf install python3-gobject gtk4-devel libadwaita-devel
-sudo dnf install python3-markdown  # Optional
+sudo dnf install python3-gobject gtk4-devel libadwaita-devel webkitgtk6.0-devel
+python3 -m pip install markdown-it-py
 ```
 
 **Arch Linux:**
 ```bash
-sudo pacman -S python-gobject gtk4 libadwaita
-sudo pacman -S python-markdown  # Optional
+sudo pacman -S python-gobject gtk4 libadwaita webkitgtk-6.0
+python3 -m pip install markdown-it-py
 ```
+
+#### Optional dependencies
+
+- `pygments`: optional, useful if you want the legacy non-HTML renderer paths and developer checks to have richer syntax highlighting
+- `python-markdown`: optional fallback parser if `markdown-it-py` is unavailable, but not the preferred path
 
 #### Installation
 
 ```bash
 # Clone the repository
-git clone https://gitlab.com/pabmartine/markdown-editor.git
+git clone https://github.com/pabmartine/markdown-editor.git
 cd markdown-editor
 
 # Install desktop file (optional)
@@ -80,9 +102,15 @@ python3 markdown-editor.py
 | `Ctrl+P` | Print |
 | `Esc` | Close search |
 
-### Toolbar
+### Editor behavior
 
-The toolbar includes buttons for:
+- Pressing `Enter` inside bullet, numbered or task lists continues the list automatically.
+- Opening search with selected text pre-fills the search query.
+- The outline can be opened on demand and clicking an entry jumps to that section.
+- Images can be inserted from a file chooser or by drag and drop.
+- Preferences open in their own movable window instead of a fixed modal panel.
+
+### Toolbar
 
 - **Text formatting**: Bold, italic, strikethrough
 - **Headers**: H1 to H6
@@ -90,18 +118,25 @@ The toolbar includes buttons for:
 - **Elements**: Quotes, code, tables, horizontal lines
 - **Media**: Links, images
 
-### Rendering styles
+### Preview styles
 
-The editor includes several rendering styles:
+The editor includes several rendering styles for the embedded HTML preview:
 
-- **Default**: Clean standard style
-- **GitHub**: Mimics GitHub's style
-- **GitHub Light/Dark**: Light and dark variants
-- **GitLab**: GitLab style
-- **Splendor**: Elegant and modern design
-- **Modest**: Minimalist style
-- **Retro**: Vintage appearance
-- **Air**: Spacious and clean design
+- **Default**: Clean documentation-like layout
+- **Slate**: Cool editorial style with muted blue-gray structure
+- **Ivory**: Book-like serif presentation with warm paper tones
+- **Nocturne**: High-contrast dark style for night reading
+- **Ember**: Warm magazine-inspired layout with terracotta accents
+- **Splendor**: Elegant display typography with more ceremonial headings
+- **Modest**: Flat, restrained and practical reading style
+- **Retro**: Vintage typewriter-inspired paper aesthetic
+- **Air**: Bright, spacious and lightweight reading experience
+
+### Export and print
+
+- **Export as HTML** writes the same themed HTML representation used by the preview.
+- **Export as PDF** and **Print** use the rendered HTML preview instead of raw Markdown text.
+- PDF output uses a compact print stylesheet so page density is higher than the on-screen preview.
 
 ## Configuration
 
@@ -112,7 +147,10 @@ Includes:
 - Window position and size
 - Interface language
 - Theme (light/dark)
-- Rendering style
+- Preview style
+- Recent files
+- Recovery/session preferences
+- Editor font size and content width
 
 ## Development
 
@@ -120,26 +158,29 @@ Includes:
 
 ```
 markdown-editor/
-├── markdown-editor.py          # Main application
-├── locale/                     # Translation files
-│   ├── es/LC_MESSAGES/
-│   └── en/LC_MESSAGES/
-├── com.pabmartine.MarkdownEditor.yml  # Flatpak manifest
-├── com.pabmartine.MarkdownEditor.desktop
-└── README.md
+├── markdown-editor.py
+├── src/markdown_editor/
+│   ├── core/
+│   ├── models/
+│   ├── repositories/
+│   ├── services/
+│   ├── ui/
+│   ├── app.py
+│   └── main.py
+├── tests/
+├── docs/
+├── data/
+└── packaging/flatpak/
 ```
 
 ### Running in development mode
 
 ```bash
-# Run with debug
-python3 markdown-editor.py --debug
-
 # Run tests
 python3 markdown-editor.py --test
 
-# View system information
-python3 markdown-editor.py --debug
+# Run normally
+python3 markdown-editor.py
 ```
 
 ### Building Flatpak
@@ -188,7 +229,7 @@ Contributions are welcome. Please:
 
 If you find a bug or have a suggestion:
 
-1. Search in [existing Issues](https://gitlab.com/pabmartine/markdown-editor/-/issues)
+1. Search in [existing Issues](https://github.com/pabmartine/markdown-editor/issues)
 2. If it doesn't exist, create a new Issue with:
    - Clear description of the problem
    - Steps to reproduce
@@ -201,4 +242,4 @@ This project is licensed under GPL v3. See [LICENSE](LICENSE) for details.
 
 ---
 
-**Like the project?** ⭐ Give it a star on GitLab
+**Like the project?** Give it a star on GitHub.

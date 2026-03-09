@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "markdown-editor"
+version = "1.2.0"
+description = "GTK4/libadwaita Markdown editor for GNOME"
+readme = "README.md"
+license = { text = "GPL-3.0-only" }
+requires-python = ">=3.10"
+dependencies = [
+    "markdown-it-py>=3,<4",
+]
+
+[project.scripts]
+markdown-editor = "markdown_editor.main:main_entrypoint"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -118,6 +118,15 @@ msgstr "Split view"
 msgid "Preview only"
 msgstr "Preview only"
 
+msgid "Outline"
+msgstr "Outline"
+
+msgid "Show or hide outline"
+msgstr "Show or hide outline"
+
+msgid "No headings"
+msgstr "No headings"
+
 msgid "Ready"
 msgstr "Ready"
 

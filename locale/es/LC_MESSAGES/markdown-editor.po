@@ -118,6 +118,15 @@ msgstr "Vista partida"
 msgid "Preview only"
 msgstr "Solo vista previa"
 
+msgid "Outline"
+msgstr "Esquema"
+
+msgid "Show or hide outline"
+msgstr "Mostrar u ocultar esquema"
+
+msgid "No headings"
+msgstr "Sin encabezados"
+
 msgid "Ready"
 msgstr "Listo"
 
