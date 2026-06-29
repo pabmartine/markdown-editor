@@ -1,7 +1,7 @@
 APP_ID = "com.pabmartine.MarkdownEditor"
 APP_NAME = "Markdown Editor"
 APP_DOMAIN = "markdown-editor"
-APP_VERSION = "1.2.0"
+APP_VERSION = "1.3.0"
 APP_WEBSITE = "https://github.com/pabmartine/markdown-editor"
 
 DEFAULT_CONFIG = {

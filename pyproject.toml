@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "markdown-editor"
-version = "1.2.0"
+version = "1.3.0"
 description = "GTK4/libadwaita Markdown editor for GNOME"
 readme = "README.md"
 license = { text = "GPL-3.0-only" }
