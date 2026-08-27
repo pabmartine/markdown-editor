@@ -1,9 +1,31 @@
 import os
 
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gio, GLib, Gtk
 
 from ...core.constants import MAX_RECENT_FILES
 from ...core.i18n import translate as _
+
+
+def _markdown_filters():
+    filter_md = Gtk.FileFilter()
+    filter_md.set_name(_("Markdown files"))
+    filter_md.add_mime_type("text/markdown")
+    for suffix in ("md", "markdown", "mdown", "mkd"):
+        filter_md.add_suffix(suffix)
+
+    filter_any = Gtk.FileFilter()
+    filter_any.set_name(_("All files"))
+    filter_any.add_pattern("*")
+
+    filters = Gio.ListStore.new(Gtk.FileFilter)
+    filters.append(filter_md)
+    filters.append(filter_any)
+    return filters, filter_md
+
+
+def _dismissed(error):
+    """True when the user simply closed the file chooser."""
+    return error.matches(Gtk.DialogError.quark(), Gtk.DialogError.DISMISSED)
 
 
 class FileOperationsMixin:
@@ -28,8 +50,7 @@ class FileOperationsMixin:
             action()
             return
 
-        dialog = Adw.MessageDialog.new(
-            self,
+        dialog = Adw.AlertDialog.new(
             _("Unsaved changes"),
             _("The current document has unsaved changes.")
         )
@@ -41,11 +62,9 @@ class FileOperationsMixin:
         dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
         dialog.set_response_appearance("discard", Adw.ResponseAppearance.DESTRUCTIVE)
         dialog.connect("response", self._on_unsaved_changes_response, action)
-        dialog.present()
+        dialog.present(self)
 
     def _on_unsaved_changes_response(self, dialog, response, action):
-        dialog.destroy()
-
         if response == "discard":
             action()
         elif response == "save":
@@ -58,37 +77,23 @@ class FileOperationsMixin:
         self.confirm_discard_changes(self._show_open_dialog)
 
     def _show_open_dialog(self):
-        dialog = Gtk.FileChooserNative.new(
-            _("Open file"),
-            self,
-            Gtk.FileChooserAction.OPEN,
-            _("_Open"),
-            _("_Cancel")
-        )
+        dialog = Gtk.FileDialog()
+        dialog.set_title(_("Open file"))
+        filters, default_filter = _markdown_filters()
+        dialog.set_filters(filters)
+        dialog.set_default_filter(default_filter)
+        dialog.open(self, None, self.on_open_dialog_response)
 
-        filter_md = Gtk.FileFilter()
-        filter_md.set_name(_("Markdown files"))
-        filter_md.add_mime_type("text/markdown")
-        filter_md.add_pattern("*.md")
-        filter_md.add_pattern("*.markdown")
-        filter_md.add_pattern("*.mdown")
-        filter_md.add_pattern("*.mkd")
-        dialog.add_filter(filter_md)
+    def on_open_dialog_response(self, dialog, result):
+        try:
+            file = dialog.open_finish(result)
+        except GLib.Error as error:
+            if not _dismissed(error):
+                self.show_error_dialog(f"{_('Error')}: {error.message}")
+            return
 
-        filter_any = Gtk.FileFilter()
-        filter_any.set_name(_("All files"))
-        filter_any.add_pattern("*")
-        dialog.add_filter(filter_any)
-
-        dialog.connect("response", self.on_open_dialog_response)
-        dialog.show()
-
-    def on_open_dialog_response(self, dialog, response):
-        if response == Gtk.ResponseType.ACCEPT:
-            file = dialog.get_file()
-            if file:
-                self.load_file(file.get_path())
-        dialog.destroy()
+        if file:
+            self.load_file(file.get_path())
     
     def on_save(self, widget):
         self.save_document()
@@ -110,48 +115,38 @@ class FileOperationsMixin:
 
         self.pending_after_save = after_save
             
-        dialog = Gtk.FileChooserNative.new(
-            _("Save file"),
-            self,
-            Gtk.FileChooserAction.SAVE,
-            _("_Save"),
-            _("_Cancel")
-        )
-        dialog.set_current_name(_("untitled.md"))
+        dialog = Gtk.FileDialog()
+        dialog.set_title(_("Save file"))
+        dialog.set_initial_name(_("untitled.md"))
+        filters, default_filter = _markdown_filters()
+        dialog.set_filters(filters)
+        dialog.set_default_filter(default_filter)
+        dialog.save(self, None, self.on_save_dialog_response)
 
-        filter_md = Gtk.FileFilter()
-        filter_md.set_name(_("Markdown files"))
-        filter_md.add_mime_type("text/markdown")
-        filter_md.add_pattern("*.md")
-        dialog.add_filter(filter_md)
-
-        filter_any = Gtk.FileFilter()
-        filter_any.set_name(_("All files"))
-        filter_any.add_pattern("*")
-        dialog.add_filter(filter_any)
-
-        dialog.connect("response", self.on_save_dialog_response)
-        dialog.show()
-
-    def on_save_dialog_response(self, dialog, response):
-        if response == Gtk.ResponseType.ACCEPT:
-            file = dialog.get_file()
-            if file:
-                self.current_file = file.get_path()
-                if self.save_file():
-                    self.update_title()
-                    self.update_header()
-                    if self.pending_after_save:
-                        callback = self.pending_after_save
-                        self.pending_after_save = None
-                        callback()
-                else:
-                    self.pending_after_save = None
-            else:
-                self.pending_after_save = None
-        else:
+    def on_save_dialog_response(self, dialog, result):
+        try:
+            file = dialog.save_finish(result)
+        except GLib.Error as error:
             self.pending_after_save = None
-        dialog.destroy()
+            if not _dismissed(error):
+                self.show_error_dialog(f"{_('Error')}: {error.message}")
+            return
+
+        if not file:
+            self.pending_after_save = None
+            return
+
+        self.current_file = file.get_path()
+        if not self.save_file():
+            self.pending_after_save = None
+            return
+
+        self.update_title()
+        self.update_header()
+        if self.pending_after_save:
+            callback = self.pending_after_save
+            self.pending_after_save = None
+            callback()
     
     def load_file(self, file_path):
         try:
@@ -229,10 +224,11 @@ class FileOperationsMixin:
             print(f"Error: {message}")
             return
             
-        dialog = Adw.MessageDialog.new(self, _("Error"), message)
-        dialog.add_response("ok", _("Accept"))
-        dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
-        dialog.present()
+        dialog = Adw.AlertDialog.new(_("Error"), message)
+        dialog.add_response("ok", _("Close"))
+        dialog.set_default_response("ok")
+        dialog.set_close_response("ok")
+        dialog.present(self)
     
     def update_title(self):
         if self.current_file:

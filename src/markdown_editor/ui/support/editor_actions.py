@@ -5,11 +5,52 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gdk", "4.0")
+gi.require_version("Adw", "1")
 
-from gi.repository import Gdk, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from ...core.i18n import translate as _
 from ...services.document_service import DocumentService
+
+
+def _form_dialog(title, content, on_accept, parent, accept_label):
+    """An AdwDialog with Cancel/accept in its header bar.
+
+    Replaces Gtk.Dialog (deprecated in GTK 4.10) and puts the actions in the
+    header bar, which is where the HIG asks for them.
+    """
+    dialog = Adw.Dialog(title=title, content_width=420)
+
+    header = Adw.HeaderBar()
+    header.set_show_start_title_buttons(False)
+    header.set_show_end_title_buttons(False)
+
+    cancel_button = Gtk.Button(label=_("Cancel"))
+    cancel_button.connect("clicked", lambda _b: dialog.close())
+    header.pack_start(cancel_button)
+
+    accept_button = Gtk.Button(label=accept_label)
+    accept_button.add_css_class("suggested-action")
+
+    def accept(_button):
+        on_accept()
+        dialog.close()
+
+    accept_button.connect("clicked", accept)
+    header.pack_end(accept_button)
+
+    content.set_margin_start(12)
+    content.set_margin_end(12)
+    content.set_margin_top(12)
+    content.set_margin_bottom(12)
+
+    toolbar = Adw.ToolbarView()
+    toolbar.add_top_bar(header)
+    toolbar.set_content(content)
+    dialog.set_child(toolbar)
+    dialog.set_default_widget(accept_button)
+    dialog.present(parent)
+    return dialog
 
 
 class EditorActionsMixin:
@@ -78,17 +119,7 @@ class EditorActionsMixin:
             start, end = bounds
             selected_text = self.text_buffer.get_text(start, end, False)
 
-        dialog = Gtk.Dialog()
-        dialog.set_title(_("Insert link"))
-        dialog.set_modal(True)
-        dialog.set_transient_for(self)
-
-        content = dialog.get_content_area()
-        content.set_spacing(12)
-        content.set_margin_start(12)
-        content.set_margin_end(12)
-        content.set_margin_top(12)
-        content.set_margin_bottom(12)
+        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
 
         text_entry = Gtk.Entry()
         text_entry.set_placeholder_text(_("Link text"))
@@ -100,10 +131,13 @@ class EditorActionsMixin:
         url_entry.set_text("https://")
         content.append(url_entry)
 
-        dialog.add_button(_("_Cancel"), Gtk.ResponseType.CANCEL)
-        dialog.add_button(_("_Insert"), Gtk.ResponseType.ACCEPT)
-        dialog.connect("response", self.on_insert_link_dialog_response, text_entry, url_entry)
-        dialog.present()
+        _form_dialog(
+            _("Insert link"),
+            content,
+            lambda: self.apply_inserted_link(text_entry.get_text(), url_entry.get_text()),
+            self,
+            _("Insert"),
+        )
 
     def insert_image_markup(self, _button=None):
         if not hasattr(self, "text_buffer"):
@@ -123,27 +157,24 @@ class EditorActionsMixin:
                 self.text_buffer.insert(start, replacement)
                 return
 
-            dialog = Gtk.FileChooserNative.new(
-                _("Select image"),
-                self,
-                Gtk.FileChooserAction.OPEN,
-                _("_Open"),
-                _("_Cancel"),
-            )
-
             image_filter = Gtk.FileFilter()
             image_filter.set_name(_("Images"))
-            for pattern in ("*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.svg"):
-                image_filter.add_pattern(pattern)
-            dialog.add_filter(image_filter)
+            for suffix in ("png", "jpg", "jpeg", "gif", "webp", "svg"):
+                image_filter.add_suffix(suffix)
 
             any_filter = Gtk.FileFilter()
             any_filter.set_name(_("All files"))
             any_filter.add_pattern("*")
-            dialog.add_filter(any_filter)
 
-            dialog.connect("response", self.on_insert_image_dialog_response)
-            dialog.show()
+            filters = Gio.ListStore.new(Gtk.FileFilter)
+            filters.append(image_filter)
+            filters.append(any_filter)
+
+            dialog = Gtk.FileDialog()
+            dialog.set_title(_("Select image"))
+            dialog.set_filters(filters)
+            dialog.set_default_filter(image_filter)
+            dialog.open(self, None, self.on_insert_image_dialog_response)
         except Exception as e:
             print(f"Error inserting image: {e}")
 
@@ -151,31 +182,31 @@ class EditorActionsMixin:
         lowered = text.lower().strip().strip('"').strip("'")
         return lowered.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"))
 
-    def on_insert_image_dialog_response(self, dialog, response):
+    def on_insert_image_dialog_response(self, dialog, result):
         try:
-            if response == Gtk.ResponseType.ACCEPT:
-                file = dialog.get_file()
-                if file and file.get_path():
-                    image_path = file.get_path()
-                    display_path = image_path
-                    if getattr(self, "current_file", None):
-                        try:
-                            display_path = os.path.relpath(image_path, os.path.dirname(self.current_file))
-                        except ValueError:
-                            display_path = image_path
-                    alt_text = os.path.basename(image_path)
-                    self.text_buffer.insert_at_cursor(f"![{alt_text}]({display_path})")
-        finally:
-            dialog.destroy()
+            file = dialog.open_finish(result)
+        except GLib.Error as error:
+            if not error.matches(Gtk.DialogError.quark(), Gtk.DialogError.DISMISSED):
+                print(f"Error selecting image: {error.message}")
+            return
 
-    def on_insert_link_dialog_response(self, dialog, response, text_entry, url_entry):
-        try:
-            if response == Gtk.ResponseType.ACCEPT:
-                link_text = text_entry.get_text().strip() or _("Link")
-                url = url_entry.get_text().strip() or "https://"
-                self._replace_selection_or_insert(f"[{link_text}]({url})")
-        finally:
-            dialog.destroy()
+        if not file or not file.get_path():
+            return
+
+        image_path = file.get_path()
+        display_path = image_path
+        if getattr(self, "current_file", None):
+            try:
+                display_path = os.path.relpath(image_path, os.path.dirname(self.current_file))
+            except ValueError:
+                display_path = image_path
+        alt_text = os.path.basename(image_path)
+        self.text_buffer.insert_at_cursor(f"![{alt_text}]({display_path})")
+
+    def apply_inserted_link(self, link_text, url):
+        link_text = (link_text or "").strip() or _("Link")
+        url = (url or "").strip() or "https://"
+        self._replace_selection_or_insert(f"[{link_text}]({url})")
     
     def insert_list_item(self, list_type):
         if not hasattr(self, 'text_buffer'):
@@ -207,17 +238,7 @@ class EditorActionsMixin:
         if not hasattr(self, 'text_buffer'):
             return
 
-        dialog = Gtk.Dialog()
-        dialog.set_title(_("Insert table"))
-        dialog.set_modal(True)
-        dialog.set_transient_for(self)
-
-        content = dialog.get_content_area()
-        content.set_spacing(12)
-        content.set_margin_start(12)
-        content.set_margin_end(12)
-        content.set_margin_top(12)
-        content.set_margin_bottom(12)
+        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
 
         rows_spin = Gtk.SpinButton.new_with_range(2, 20, 1)
         rows_spin.set_value(3)
@@ -246,19 +267,16 @@ class EditorActionsMixin:
 
         content.append(grid)
 
-        dialog.add_button(_("_Cancel"), Gtk.ResponseType.CANCEL)
-        dialog.add_button(_("_Insert"), Gtk.ResponseType.ACCEPT)
-        dialog.connect("response", self.on_insert_table_dialog_response, rows_spin, cols_spin)
-        dialog.present()
+        _form_dialog(
+            _("Insert table"),
+            content,
+            lambda: self.apply_inserted_table(int(rows_spin.get_value()), int(cols_spin.get_value())),
+            self,
+            _("Insert"),
+        )
 
-    def on_insert_table_dialog_response(self, dialog, response, rows_spin, cols_spin):
-        try:
-            if response == Gtk.ResponseType.ACCEPT:
-                rows = int(rows_spin.get_value())
-                cols = int(cols_spin.get_value())
-                self._replace_selection_or_insert(self.build_markdown_table(rows, cols))
-        finally:
-            dialog.destroy()
+    def apply_inserted_table(self, rows, cols):
+        self._replace_selection_or_insert(self.build_markdown_table(rows, cols))
 
     @staticmethod
     def build_markdown_table(rows, cols):

@@ -16,12 +16,16 @@ except Exception:
 
 from gi.repository import Adw, Gio, GLib, Gtk
 
+from .core.constants import APP_ID
 from .core.i18n import get_available_languages, translate as _
 from .cli.arguments import apply_cli_options
 from .services.export_service import ExportService
 from .services.rendering import RendererFactory
 from .services.system_service import build_version_string
 from .ui.window import MarkdownEditorWindow
+
+
+COLOR_SCHEMES = ["default", "light", "dark"]
 
 
 class MarkdownApp(Adw.Application):
@@ -44,6 +48,8 @@ class MarkdownApp(Adw.Application):
         print_action.connect("activate", self.on_print)
         self.add_action(print_action)
         self.set_accels_for_action("app.print", ["<Control>p"])
+        self.set_accels_for_action("app.preferences", ["<Control>comma"])
+        self.set_accels_for_action("app.shortcuts", ["<Control>question"])
         
         language_action = Gio.SimpleAction.new_stateful(
             "language", GLib.VariantType.new("s"), GLib.Variant("s", "auto")
@@ -75,9 +81,15 @@ class MarkdownApp(Adw.Application):
         about_action.connect("activate", self.on_about)
         self.add_action(about_action)
     
+    def _toast(self, message):
+        if hasattr(self, "win") and hasattr(self.win, "show_toast"):
+            self.win.show_toast(message)
+        else:
+            print(message)
+
     def on_print(self, action, parameter):
         if not WEBKIT_AVAILABLE:
-            print("Error printing: WebKit is not available")
+            self._toast(_("Printing needs WebKitGTK, which is not available"))
             return
 
         def run_print(webview):
@@ -87,6 +99,7 @@ class MarkdownApp(Adw.Application):
                 print_operation.run_dispose()
             except Exception as e:
                 print(f"Error printing: {e}")
+                self._toast(_("Could not print the document"))
 
         self.prepare_preview_webview_for_printing(run_print)
     
@@ -105,17 +118,9 @@ class MarkdownApp(Adw.Application):
             print("Adwaita not available for preferences")
             return
 
-        if hasattr(self, "preferences_window") and self.preferences_window:
-            self.preferences_window.present()
-            return
-
-        dialog = Adw.PreferencesWindow()
-        dialog.set_title(_("Preferences"))
-        dialog.set_transient_for(self.win)
-        dialog.set_modal(False)
-        dialog.set_destroy_with_parent(True)
-        dialog.set_default_size(720, 640)
-        dialog.connect("close-request", self.on_preferences_close_request)
+        # AdwPreferencesDialog manages its own presentation, so the manual
+        # transient/modal/size handling and the reuse bookkeeping go away.
+        dialog = Adw.PreferencesDialog()
 
         page = Adw.PreferencesPage()
         page.set_title(_("General"))
@@ -136,12 +141,7 @@ class MarkdownApp(Adw.Application):
         page.add(autosave_group)
 
         dialog.add(page)
-        self.preferences_window = dialog
-        dialog.present()
-
-    def on_preferences_close_request(self, window):
-        self.preferences_window = None
-        return False
+        dialog.present(self.win)
 
     def create_language_preferences(self):
         language_group = Adw.PreferencesGroup()
@@ -175,12 +175,18 @@ class MarkdownApp(Adw.Application):
         appearance_group = Adw.PreferencesGroup()
         appearance_group.set_title(_("Appearance"))
 
-        dark_theme_row = Adw.SwitchRow()
-        dark_theme_row.set_title(_("Dark Theme"))
-        dark_theme_row.set_subtitle(_("Use dark theme for the application"))
-        dark_theme_row.set_active(self.win.config.get("dark_theme", False))
-        dark_theme_row.connect("notify::active", self.on_theme_changed)
-        appearance_group.add(dark_theme_row)
+        # Three states, so "follow the system" is expressible. The old boolean
+        # mapped "off" to FORCE_LIGHT, overriding a dark desktop.
+        style_row = Adw.ComboRow()
+        style_row.set_title(_("Style"))
+        style_row.set_subtitle(_("Follow the system preference, or force one"))
+        style_model = Gtk.StringList()
+        for label in (_("Follow System"), _("Light"), _("Dark")):
+            style_model.append(label)
+        style_row.set_model(style_model)
+        style_row.set_selected(COLOR_SCHEMES.index(self.win.get_color_scheme()))
+        style_row.connect("notify::selected", self.on_color_scheme_changed)
+        appearance_group.add(style_row)
         
         return appearance_group
 
@@ -289,10 +295,10 @@ class MarkdownApp(Adw.Application):
             if action:
                 action.activate(GLib.Variant("s", language_code))
 
-    def on_theme_changed(self, switch_row, param):
-        dark_theme = switch_row.get_active()
-        self.win.apply_theme(dark_theme)
-        self.win.config.set("dark_theme", dark_theme)
+    def on_color_scheme_changed(self, combo_row, param):
+        selected = combo_row.get_selected()
+        if selected < len(COLOR_SCHEMES):
+            self.win.change_color_scheme(COLOR_SCHEMES[selected])
 
     def on_editor_font_size_changed(self, spin_row, _param):
         value = int(spin_row.get_value())
@@ -316,60 +322,79 @@ class MarkdownApp(Adw.Application):
     def on_restore_session_changed(self, switch_row, _param):
         self.win.config.set("auto_restore_session", switch_row.get_active())
 
+    @staticmethod
+    def _make_filter(name, mime_type, suffix):
+        file_filter = Gtk.FileFilter()
+        file_filter.set_name(name)
+        file_filter.add_mime_type(mime_type)
+        file_filter.add_suffix(suffix)
+        filters = Gio.ListStore.new(Gtk.FileFilter)
+        filters.append(file_filter)
+        return filters, file_filter
+
+    @staticmethod
+    def _finish_save(dialog, result, context):
+        """Return the chosen file, or None when the user dismissed the dialog."""
+        try:
+            return dialog.save_finish(result)
+        except GLib.Error as error:
+            if not error.matches(Gtk.DialogError.quark(), Gtk.DialogError.DISMISSED):
+                print(f"Error in {context} dialog: {error.message}")
+            return None
+
     def on_export_html(self, action, parameter):
         if not hasattr(self, "win") or not hasattr(self.win, "text_buffer"):
             return
-        dialog = Gtk.FileChooserNative.new(
-            _("Export as HTML"),
-            self.win,
-            Gtk.FileChooserAction.SAVE,
-            _("_Save"),
-            _("_Cancel"),
-        )
-        dialog.set_current_name("document.html")
-        dialog.connect("response", self.on_export_html_response)
-        dialog.show()
 
-    def on_export_html_response(self, dialog, response):
-        if response == Gtk.ResponseType.ACCEPT:
-            file = dialog.get_file()
-            if file:
-                title = "Markdown Document"
-                if self.win.current_file:
-                    title = self.win.current_file.rsplit("/", 1)[-1]
-                text = self.win.text_buffer.get_text(
-                    self.win.text_buffer.get_start_iter(),
-                    self.win.text_buffer.get_end_iter(),
-                    False,
-                )
-                ExportService.export_html(
-                    file.get_path(),
-                    text,
-                    title=title,
-                    render_style=self.win.config.get("render_style", "default"),
-                )
-        dialog.destroy()
+        dialog = Gtk.FileDialog()
+        dialog.set_title(_("Export as HTML"))
+        dialog.set_initial_name("document.html")
+        filters, default_filter = self._make_filter(_("HTML files"), "text/html", "html")
+        dialog.set_filters(filters)
+        dialog.set_default_filter(default_filter)
+        dialog.save(self.win, None, self.on_export_html_response)
+
+    def on_export_html_response(self, dialog, result):
+        file = self._finish_save(dialog, result, "HTML export")
+        if not file:
+            return
+
+        title = "Markdown Document"
+        if self.win.current_file:
+            title = self.win.current_file.rsplit("/", 1)[-1]
+        text = self.win.text_buffer.get_text(
+            self.win.text_buffer.get_start_iter(),
+            self.win.text_buffer.get_end_iter(),
+            False,
+        )
+        try:
+            ExportService.export_html(
+                file.get_path(),
+                text,
+                title=title,
+                render_style=self.win.config.get("render_style", "default"),
+            )
+            self._toast(_("Exported as HTML"))
+        except Exception as exc:
+            print(f"Error exporting HTML: {exc}")
+            self._toast(_("Could not export as HTML"))
 
     def on_export_pdf(self, action, parameter):
         if not hasattr(self, "win") or not hasattr(self.win, "text_buffer"):
             return
-        dialog = Gtk.FileChooserNative.new(
-            _("Export as PDF"),
-            self.win,
-            Gtk.FileChooserAction.SAVE,
-            _("_Save"),
-            _("_Cancel"),
-        )
-        dialog.set_current_name("document.pdf")
-        dialog.connect("response", self.on_export_pdf_response)
-        dialog.show()
 
-    def on_export_pdf_response(self, dialog, response):
-        if response == Gtk.ResponseType.ACCEPT:
-            file = dialog.get_file()
-            if file:
-                self.export_preview_to_pdf(file)
-        dialog.destroy()
+        dialog = Gtk.FileDialog()
+        dialog.set_title(_("Export as PDF"))
+        dialog.set_initial_name("document.pdf")
+        filters, default_filter = self._make_filter(_("PDF files"), "application/pdf", "pdf")
+        dialog.set_filters(filters)
+        dialog.set_default_filter(default_filter)
+        dialog.save(self.win, None, self.on_export_pdf_response)
+
+    def on_export_pdf_response(self, dialog, result):
+        file = self._finish_save(dialog, result, "PDF export")
+        if file:
+            self.export_preview_to_pdf(file)
 
     def prepare_preview_webview_for_printing(self, callback):
         if not hasattr(self, "win") or not hasattr(self.win, "text_buffer"):
@@ -406,7 +431,7 @@ class MarkdownApp(Adw.Application):
 
     def export_preview_to_pdf(self, file):
         if not WEBKIT_AVAILABLE:
-            print("Error exporting PDF: WebKit is not available")
+            self._toast(_("PDF export needs WebKitGTK, which is not available"))
             return
 
         def run_export(webview):
@@ -421,117 +446,129 @@ class MarkdownApp(Adw.Application):
                 print_operation.set_print_settings(print_settings)
                 print_operation.print_()
                 print_operation.run_dispose()
+                self._toast(_("Exported as PDF"))
             except Exception as e:
                 print(f"Error exporting PDF: {e}")
+                self._toast(_("Could not export as PDF"))
 
         self.prepare_preview_webview_for_printing(run_export)
+
+    def _syntax_reference(self):
+        """Grouped the way the keyboard shortcuts dialog groups accelerators.
+
+        Built here, with the literals inline, so xgettext can extract them: a
+        module-level table translated through `_(variable)` would look
+        translatable but never reach the catalogues.
+        """
+        return [
+            (_("Text"), [
+                (_("Bold"), "**text**"),
+                (_("Italic"), "*text*"),
+                (_("Strikethrough"), "~~text~~"),
+                (_("Inline code"), "`code`"),
+            ]),
+            (_("Headings"), [
+                (_("Heading 1"), "# Heading"),
+                (_("Heading 2"), "## Heading"),
+                (_("Heading 3"), "### Heading"),
+                (_("Lower levels"), "#### … ######"),
+            ]),
+            (_("Lists"), [
+                (_("Bullet list"), "- item"),
+                (_("Numbered list"), "1. item"),
+                (_("Task list"), "- [ ] item"),
+            ]),
+            (_("Blocks"), [
+                (_("Quote"), "> quoted text"),
+                (_("Code block"), "```"),
+                (_("Horizontal line"), "---"),
+            ]),
+            (_("Links and media"), [
+                (_("Insert link"), "[text](https://example.com)"),
+                (_("Insert image"), "![alt](image.png)"),
+                (_("Insert table"), "| A | B |"),
+            ]),
+        ]
 
     def on_syntax_help(self, action, parameter):
         if not hasattr(self, "win"):
             return
 
-        dialog = Gtk.Dialog()
-        dialog.set_title(_("Markdown syntax"))
-        dialog.set_modal(True)
-        dialog.set_transient_for(self.win)
-        dialog.set_default_size(520, 420)
+        dialog = Adw.Dialog(
+            title=_("Markdown syntax"), content_width=560, content_height=620
+        )
 
-        content = dialog.get_content_area()
-        content.set_margin_start(12)
-        content.set_margin_end(12)
-        content.set_margin_top(12)
-        content.set_margin_bottom(12)
+        page = Adw.PreferencesPage()
+        for group_title, entries in self._syntax_reference():
+            group = Adw.PreferencesGroup(title=group_title)
+            for label, syntax in entries:
+                row = Adw.ActionRow(title=label)
+                snippet = Gtk.Label(label=syntax)
+                snippet.add_css_class("monospace")
+                snippet.add_css_class("dim-label")
+                # Kept selectable so a snippet can still be copied out, which
+                # the previous plain-text version allowed.
+                snippet.set_selectable(True)
+                snippet.set_valign(Gtk.Align.CENTER)
+                row.add_suffix(snippet)
+                group.add(row)
+            page.add(group)
 
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_vexpand(True)
-        content.append(scroll)
-
-        help_text = "\n".join([
-            "# Heading 1",
-            "## Heading 2",
-            "**bold**",
-            "*italic*",
-            "`code`",
-            "```",
-            "code block",
-            "```",
-            "- list item",
-            "1. numbered item",
-            "- [ ] task item",
-            "> blockquote",
-            "[Link](https://example.com)",
-            "![Image](image.png)",
-            "| Header | Header |",
-            "| --- | --- |",
-            "| Cell | Cell |",
-        ])
-
-        label = Gtk.Label()
-        label.set_selectable(True)
-        label.set_xalign(0)
-        label.set_yalign(0)
-        label.set_wrap(True)
-        label.set_text(help_text)
-        scroll.set_child(label)
-
-        dialog.add_button(_("_Close"), Gtk.ResponseType.CLOSE)
-        dialog.connect("response", lambda dlg, _resp: dlg.destroy())
-        dialog.present()
+        toolbar = Adw.ToolbarView()
+        toolbar.add_top_bar(Adw.HeaderBar())
+        toolbar.set_content(page)
+        dialog.set_child(toolbar)
+        dialog.present(self.win)
 
     def on_shortcuts(self, action, parameter):
         if not hasattr(self, "win"):
             return
 
-        window = Gtk.ShortcutsWindow()
-        window.set_transient_for(self.win)
-        window.set_modal(True)
+        # GtkShortcutsWindow and its Section/Group/Shortcut helpers are
+        # deprecated since GTK 4.18; AdwShortcutsDialog replaces the lot.
+        dialog = Adw.ShortcutsDialog()
 
-        section = Gtk.ShortcutsSection()
-        section.set_title(_("Editor"))
-
-        document_group = Gtk.ShortcutsGroup()
-        document_group.set_title(_("Document"))
+        document = Adw.ShortcutsSection(title=_("Document"))
         for title, accelerator in [
             (_("New document"), "<Control>n"),
             (_("Open file"), "<Control>o"),
             (_("Save file"), "<Control>s"),
-            (_("Search"), "<Control>f"),
+            (_("Print"), "<Control>p"),
         ]:
-            shortcut = Gtk.ShortcutsShortcut()
-            shortcut.set_title(title)
-            shortcut.set_accelerator(accelerator)
-            document_group.add_shortcut(shortcut)
+            document.add(Adw.ShortcutsItem(title=title, accelerator=accelerator))
+        dialog.add(document)
 
-        format_group = Gtk.ShortcutsGroup()
-        format_group.set_title(_("Formatting"))
+        formatting = Adw.ShortcutsSection(title=_("Formatting"))
         for title, accelerator in [
             (_("Bold"), "<Control>b"),
             (_("Italic"), "<Control>i"),
             (_("Insert link"), "<Control>k"),
-            (_("Hide search"), "Escape"),
         ]:
-            shortcut = Gtk.ShortcutsShortcut()
-            shortcut.set_title(title)
-            shortcut.set_accelerator(accelerator)
-            format_group.add_shortcut(shortcut)
+            formatting.add(Adw.ShortcutsItem(title=title, accelerator=accelerator))
+        dialog.add(formatting)
 
-        section.add_group(document_group)
-        section.add_group(format_group)
-        window.add_section(section)
-        window.present()
+        general = Adw.ShortcutsSection(title=_("General"))
+        for title, accelerator in [
+            (_("Search"), "<Control>f"),
+            (_("Hide search"), "Escape"),
+            (_("Preferences"), "<Control>comma"),
+            (_("Keyboard Shortcuts"), "<Control>question"),
+        ]:
+            general.add(Adw.ShortcutsItem(title=title, accelerator=accelerator))
+        dialog.add(general)
+
+        dialog.present(self.win)
 
     def on_about(self, action, parameter):
         if not Adw:
             print("Adwaita not available for About dialog")
             return
             
-        about_dialog = Adw.AboutWindow()
-        about_dialog.set_transient_for(self.win)
-        about_dialog.set_modal(True)
-        
-        # Set the application icon
-        about_dialog.set_application_icon("text-markdown-symbolic")
-        
+        about_dialog = Adw.AboutDialog()
+        # The application's own icon, not a generic mime icon: there is no
+        # "text-markdown-symbolic" in any icon theme, so GTK was falling back
+        # to the full-colour text-markdown mime icon.
+        about_dialog.set_application_icon(APP_ID)
         about_dialog.set_application_name(_("Markdown Editor"))
         about_dialog.set_version(build_version_string())
         about_dialog.set_developer_name(_("Developer"))
@@ -548,8 +585,7 @@ class MarkdownApp(Adw.Application):
         
         about_dialog.set_website("https://github.com/pabmartine/markdown-editor")
         about_dialog.set_issue_url("https://github.com/pabmartine/markdown-editor/issues")
-        
-        about_dialog.present()
+        about_dialog.present(self.win)
     
     def on_activate(self, app):
         try:

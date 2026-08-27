@@ -1,344 +1,901 @@
-# Spanish translations for Markdown Editor
-# Copyright (C) 2025
+# Spanish translation for Markdown Editor.
+# Copyright (C) 2025 pabmartine
+# This file is distributed under the same license as the Markdown Editor package.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: markdown-editor 1.0\n"
+"Project-Id-Version: Markdown Editor 1.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-01 12:00+0000\n"
-"PO-Revision-Date: 2025-01-01 12:00+0000\n"
+"POT-Creation-Date: 2026-08-27 17:14+0200\n"
+"PO-Revision-Date: 2026-08-27 00:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Markdown Editor"
-msgstr "Editor de Markdown"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:92
+msgid "Printing needs WebKitGTK, which is not available"
+msgstr "Imprimir requiere WebKitGTK, que no está disponible"
 
-msgid "New document"
-msgstr "Nuevo documento"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:102
+msgid "Could not print the document"
+msgstr "No se pudo imprimir el documento"
 
-msgid "Open file"
-msgstr "Abrir archivo"
-
-msgid "Save file"
-msgstr "Guardar archivo"
-
-msgid "Search (Ctrl+F)"
-msgstr "Buscar (Ctrl+F)"
-
-msgid "Application menu"
-msgstr "Menú de aplicación"
-
-msgid "Print..."
-msgstr "Imprimir..."
-
-msgid "Auto-detect"
-msgstr "Auto-detectar"
-
-msgid "Language"
-msgstr "Idioma"
-
-msgid "Preferences"
-msgstr "Preferencias"
-
-msgid "About"
-msgstr "Acerca de"
-
-msgid "Create and edit Markdown documents with real-time preview"
-msgstr "Crea y edita documentos Markdown con vista previa en tiempo real"
-
-msgid "New Document"
-msgstr "Nuevo Documento"
-
-msgid "Create a new blank Markdown document"
-msgstr "Crear un nuevo documento Markdown en blanco"
-
-msgid "Create New"
-msgstr "Crear Nuevo"
-
-msgid "Open File"
-msgstr "Abrir Archivo"
-
-msgid "Open an existing Markdown document"
-msgstr "Abrir un documento Markdown existente"
-
-msgid "You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one"
-msgstr "También puedes usar Ctrl+N para crear un nuevo archivo o Ctrl+O para abrir uno existente"
-
-msgid "Bold (Ctrl+B)"
-msgstr "Negrita (Ctrl+B)"
-
-msgid "Italic (Ctrl+I)"
-msgstr "Cursiva (Ctrl+I)"
-
-msgid "Strikethrough"
-msgstr "Tachado"
-
-msgid "Select header"
-msgstr "Seleccionar encabezado"
-
-msgid "Bullet list"
-msgstr "Lista con viñetas"
-
-msgid "Numbered list"
-msgstr "Lista numerada"
-
-msgid "Task list"
-msgstr "Lista de tareas"
-
-msgid "Quote"
-msgstr "Cita"
-
-msgid "Inline code"
-msgstr "Código en línea"
-
-msgid "Code block"
-msgstr "Bloque de código"
-
-msgid "Insert link (Ctrl+K)"
-msgstr "Insertar enlace (Ctrl+K)"
-
-msgid "Insert image"
-msgstr "Insertar imagen"
-
-msgid "Insert table"
-msgstr "Insertar tabla"
-
-msgid "Horizontal line"
-msgstr "Línea horizontal"
-
-msgid "Editor only"
-msgstr "Solo editor"
-
-msgid "Split view"
-msgstr "Vista partida"
-
-msgid "Preview only"
-msgstr "Solo vista previa"
-
-msgid "Outline"
-msgstr "Esquema"
-
-msgid "Show or hide outline"
-msgstr "Mostrar u ocultar esquema"
-
-msgid "No headings"
-msgstr "Sin encabezados"
-
-msgid "Ready"
-msgstr "Listo"
-
-msgid "Modified"
-msgstr "Modificado"
-
-msgid "Saved"
-msgstr "Guardado"
-
-msgid "lines"
-msgstr "líneas"
-
-msgid "words"
-msgstr "palabras"
-
-msgid "Line"
-msgstr "Ln"
-
-msgid "Col"
-msgstr "Col"
-
-msgid "Search in document..."
-msgstr "Buscar en el documento..."
-
-msgid "Previous"
-msgstr "Anterior"
-
-msgid "Next"
-msgstr "Siguiente"
-
-msgid "matches"
-msgstr "coincidencias"
-
-msgid "No matches"
-msgstr "Sin coincidencias"
-
-msgid "of"
-msgstr "de"
-
-msgid "_Open"
-msgstr "_Abrir"
-
-msgid "_Cancel"
-msgstr "_Cancelar"
-
-msgid "Markdown files"
-msgstr "Archivos Markdown"
-
-msgid "All files"
-msgstr "Todos los archivos"
-
-msgid "_Save"
-msgstr "_Guardar"
-
-msgid "Error"
-msgstr "Error"
-
-msgid "Accept"
-msgstr "Aceptar"
-
-msgid "List item"
-msgstr "Elemento de lista"
-
-msgid "Task item"
-msgstr "Elemento de tarea"
-
-msgid "Header 1"
-msgstr "Encabezado 1"
-
-msgid "Header 2"
-msgstr "Encabezado 2"
-
-msgid "Header 3"
-msgstr "Encabezado 3"
-
-msgid "Cell 1"
-msgstr "Celda 1"
-
-msgid "Cell 2"
-msgstr "Celda 2"
-
-msgid "Cell 3"
-msgstr "Celda 3"
-
-msgid "Cell 4"
-msgstr "Celda 4"
-
-msgid "Cell 5"
-msgstr "Celda 5"
-
-msgid "Cell 6"
-msgstr "Celda 6"
-
-msgid "Image"
-msgstr "Imagen"
-
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:126
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:550
 msgid "General"
 msgstr "General"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:148
+msgid "Language"
+msgstr "Idioma"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:151
 msgid "Interface language"
 msgstr "Idioma de la interfaz"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:152
 msgid "Change application language"
 msgstr "Cambiar el idioma de la aplicación"
 
-msgid "English"
-msgstr "English"
-
-msgid "Spanish"
-msgstr "Español"
-
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:176
 msgid "Appearance"
 msgstr "Apariencia"
 
-msgid "Dark Theme"
-msgstr "Tema Oscuro"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:181
+msgid "Style"
+msgstr "Estilo"
 
-msgid "Use dark theme for the application"
-msgstr "Usar tema oscuro para la aplicación"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:182
+msgid "Follow the system preference, or force one"
+msgstr "Seguir la preferencia del sistema, o forzar una"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:184
+msgid "Follow System"
+msgstr "Seguir al sistema"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:184
+msgid "Light"
+msgstr "Claro"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:184
+msgid "Dark"
+msgstr "Oscuro"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:195
+msgid "Editor"
+msgstr "Editor"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:198
+msgid "Editor font size"
+msgstr "Tamaño de la fuente del editor"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:199
+msgid "Changes the font size used in the editor"
+msgstr "Cambia el tamaño de la fuente del editor"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:205
+msgid "Content width"
+msgstr "Ancho del contenido"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:206
+msgid "Controls the comfortable reading width. 0 disables the limit"
+msgstr "Controla el ancho de lectura cómodo. 0 desactiva el límite"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:212
+msgid "Focus mode"
+msgstr "Modo concentración"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:213
+msgid "Hides most controls while writing"
+msgstr "Oculta la mayoría de los controles al escribir"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:222
+msgid "Recovery"
+msgstr "Recuperación"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:225
+msgid "Auto-save interval"
+msgstr "Intervalo de guardado automático"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:226
+msgid "Saves recovery data every N seconds"
+msgstr "Guarda los datos de recuperación cada N segundos"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:232
+msgid "Restore previous session"
+msgstr "Restaurar la sesión anterior"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:233
+msgid "Restores the last recovery file on startup"
+msgstr "Restaura el último archivo de recuperación al arrancar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:242
 msgid "Render style"
 msgstr "Estilo de renderizado"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:245
 msgid "Preview style"
 msgstr "Estilo de vista previa"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:246
 msgid "Changes the appearance of rendered content"
 msgstr "Cambia el aspecto del contenido renderizado"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:250
 msgid "Default"
 msgstr "Por defecto"
 
-msgid "GitHub"
-msgstr "GitHub"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:251
+msgid "Slate"
+msgstr "Slate"
 
-msgid "GitHub Light"
-msgstr "GitHub Light"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:252
+msgid "Ivory"
+msgstr "Ivory"
 
-msgid "GitHub Dark"
-msgstr "GitHub Dark"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:253
+msgid "Nocturne"
+msgstr "Nocturne"
 
-msgid "GitLab"
-msgstr "GitLab"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:254
+msgid "Ember"
+msgstr "Ember"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:255
 msgid "Splendor"
 msgstr "Splendor"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:256
 msgid "Modest"
 msgstr "Modest"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:257
 msgid "Retro"
 msgstr "Retro"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:258
 msgid "Air"
 msgstr "Air"
 
-msgid "A simple and powerful Markdown editor with real-time preview"
-msgstr "Un editor de Markdown simple y potente con vista previa en tiempo real"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:350
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:321
+msgid "Export as HTML"
+msgstr "Exportar como HTML"
 
-msgid "Main Developer"
-msgstr "Desarrollador Principal"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:352
+msgid "HTML files"
+msgstr "Archivos HTML"
 
-msgid "Community Contributors"
-msgstr "Colaboradores de la comunidad"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:377
+msgid "Exported as HTML"
+msgstr "Exportado como HTML"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:380
+msgid "Could not export as HTML"
+msgstr "No se pudo exportar como HTML"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:387
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:322
+msgid "Export as PDF"
+msgstr "Exportar como PDF"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:389
+msgid "PDF files"
+msgstr "Archivos PDF"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:434
+msgid "PDF export needs WebKitGTK, which is not available"
+msgstr "Exportar a PDF requiere WebKitGTK, que no está disponible"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:449
+msgid "Exported as PDF"
+msgstr "Exportado como PDF"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:452
+msgid "Could not export as PDF"
+msgstr "No se pudo exportar como PDF"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:464
+msgid "Text"
+msgstr "Texto"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:465
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:543
+msgid "Bold"
+msgstr "Negrita"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:466
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:544
+msgid "Italic"
+msgstr "Cursiva"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:467
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:555
+msgid "Strikethrough"
+msgstr "Tachado"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:468
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:563
+msgid "Inline code"
+msgstr "Código en línea"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:470
+msgid "Headings"
+msgstr "Encabezados"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:471
+msgid "Heading 1"
+msgstr "Encabezado 1"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:472
+msgid "Heading 2"
+msgstr "Encabezado 2"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:473
+msgid "Heading 3"
+msgstr "Encabezado 3"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:474
+msgid "Lower levels"
+msgstr "Niveles inferiores"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:476
+msgid "Lists"
+msgstr "Listas"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:477
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:558
+msgid "Bullet list"
+msgstr "Lista con viñetas"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:478
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:559
+msgid "Numbered list"
+msgstr "Lista numerada"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:479
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:560
+msgid "Task list"
+msgstr "Lista de tareas"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:481
+msgid "Blocks"
+msgstr "Bloques"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:482
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:561
+msgid "Quote"
+msgstr "Cita"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:483
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:18
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:564
+msgid "Code block"
+msgstr "Bloque de código"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:484
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:570
+msgid "Horizontal line"
+msgstr "Línea horizontal"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:486
+msgid "Links and media"
+msgstr "Enlaces y multimedia"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:487
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:545
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:135
+msgid "Insert link"
+msgstr "Insertar enlace"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:488
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:567
+msgid "Insert image"
+msgstr "Insertar imagen"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:489
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:271
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:568
+msgid "Insert table"
+msgstr "Insertar tabla"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:498
+msgid "Markdown syntax"
+msgstr "Sintaxis de Markdown"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:531
+msgid "Document"
+msgstr "Documento"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:533
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:238
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:257
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:325
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:144
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:260
+msgid "New document"
+msgstr "Nuevo documento"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:534
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:81
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:146
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:266
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:269
+msgid "Open file"
+msgstr "Abrir archivo"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:535
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:119
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:148
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:277
+msgid "Save file"
+msgstr "Guardar archivo"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:536
+msgid "Print"
+msgstr "Imprimir"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:541
+msgid "Formatting"
+msgstr "Formato"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:552
+msgid "Search"
+msgstr "Buscar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:553
+msgid "Hide search"
+msgstr "Ocultar la búsqueda"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:554
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:332
+msgid "Preferences"
+msgstr "Preferencias"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:555
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:335
+msgid "Keyboard Shortcuts"
+msgstr "Atajos de teclado"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:572
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:167
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:210
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:236
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:238
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:257
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:301
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:325
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:55
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:132
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:134
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:141
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:201
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:255
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:411
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:962
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:1127
+msgid "Markdown Editor"
+msgstr "Editor de Markdown"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:574
 msgid "Developer"
 msgstr "Desarrollador"
 
-msgid "Table of Contents"
-msgstr "Tabla de Contenidos"
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:577
+msgid "A simple and powerful Markdown editor with real-time preview"
+msgstr "Un editor de Markdown simple y potente con vista previa en tiempo real"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:582
+msgid "Main Developer"
+msgstr "Desarrollador Principal"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/app.py:583
+msgid "Community Contributors"
+msgstr "Colaboradores de la comunidad"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:10
 msgid "Advanced Markdown Editor"
 msgstr "Editor de Markdown Avanzado"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:11
 msgid "Files to open"
 msgstr "Archivos a abrir"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:12
 msgid "Start in Vim mode"
 msgstr "Iniciar en modo Vim"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:13
 msgid "Editor theme"
 msgstr "Tema del editor"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:14
 msgid "Enable auto-save with interval in seconds"
 msgstr "Habilitar auto-guardado con intervalo en segundos"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:16
 msgid "Enable debug mode"
 msgstr "Habilitar modo debug"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:17
 msgid "Install desktop file"
 msgstr "Instalar archivo desktop"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/arguments.py:18
 msgid "Run tests"
 msgstr "Ejecutar tests"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:8
+msgid "Main Title"
+msgstr "Título principal"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:10
+msgid "Subtitle"
+msgstr "Subtítulo"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:12
+msgid "This is a test paragraph with"
+msgstr "Este es un párrafo de prueba con"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:12
+msgid "bold text"
+msgstr "texto en negrita"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:12
+msgid "and"
+msgstr "y"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:12
+msgid "italic text"
+msgstr "texto en cursiva"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:14
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/cli/checks.py:15
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:223
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:225
+msgid "List item"
+msgstr "Elemento de lista"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/core/i18n.py:87
+msgid "Auto-detect"
+msgstr "Auto-detectar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/core/i18n.py:88
+msgid "English"
+msgstr "English"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/core/i18n.py:89
+msgid "Spanish"
+msgstr "Español"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:12
+msgid "Could not import GTK4 and Adwaita."
+msgstr "No se pudieron importar GTK4 y Adwaita."
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:13
+msgid ""
+"Make sure you have python3-gi, libgtk-4-dev and libadwaita-1-dev installed"
+msgstr ""
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:14
+msgid "Specific error"
+msgstr "Error concreto"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:36
 msgid "ERROR: Missing required dependencies."
 msgstr "ERROR: Faltan dependencias requeridas."
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:37
 msgid "Check the installation guide for more information."
 msgstr "Consulta la guía de instalación para más información."
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:43
 msgid "System integration completed."
 msgstr "Integración con el sistema completada."
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:55
 msgid "Application interrupted by user."
 msgstr "Aplicación interrumpida por el usuario."
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:58
 msgid "Fatal error in application"
 msgstr "Error fatal en la aplicación"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/main.py:66
 msgid "ERROR: Python 3.6 or higher required"
 msgstr "ERROR: Se requiere Python 3.6 o superior"
 
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/services/document_service.py:65
+msgid "Table of Contents"
+msgstr "Tabla de Contenidos"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/services/rendering.py:296
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/services/rendering.py:298
+msgid "Image"
+msgstr "Imagen"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/services/system_service.py:109
+msgid "Test"
+msgstr "Prueba"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/services/system_service.py:109
+msgid "Test paragraph"
+msgstr "Párrafo de prueba"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:28
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:57
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:125
+msgid "Link text"
+msgstr "Texto del enlace"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:130
+msgid "URL"
+msgstr "URL"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:139
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:275
+msgid "Insert"
+msgstr "Insertar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:161
+msgid "Images"
+msgstr "Imágenes"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:166
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:17
+msgid "All files"
+msgstr "Todos los archivos"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:174
+msgid "Select image"
+msgstr "Seleccionar imagen"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:207
+msgid "Link"
+msgstr "Enlace"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:227
+msgid "Task item"
+msgstr "Elemento de tarea"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:252
+msgid "Rows"
+msgstr "Filas"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:260
+msgid "Columns"
+msgstr "Columnas"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:385
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:433
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:184
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:723
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:951
+msgid "Line"
+msgstr "Ln"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:385
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:433
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:184
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:951
+msgid "Col"
+msgstr "Col"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:397
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:174
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:918
+msgid "lines"
+msgstr "líneas"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:399
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:176
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:921
+msgid "words"
+msgstr "palabras"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:401
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:178
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:929
+msgid "chars"
+msgstr "caracteres"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:403
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:180
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:932
+msgid "headers"
+msgstr "encabezados"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:405
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:182
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:935
+msgid "min read"
+msgstr "min de lectura"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/editor_actions.py:452
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:159
+msgid "Modified"
+msgstr "Modificado"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:11
+msgid "Markdown files"
+msgstr "Archivos Markdown"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:54
+msgid "Unsaved changes"
+msgstr "Cambios sin guardar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:55
+msgid "The current document has unsaved changes."
+msgstr "El documento actual tiene cambios sin guardar."
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:58
+msgid "Discard"
+msgstr "Descartar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:59
+msgid "Save"
+msgstr "Guardar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:92
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:132
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:184
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:219
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:227
+msgid "Error"
+msgstr "Error"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:120
 msgid "untitled.md"
 msgstr "sin-titulo.md"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:170
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:282
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:163
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:913
+msgid "Ready"
+msgstr "Listo"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:214
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:161
+msgid "Saved"
+msgstr "Guardado"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/file_operations.py:228
+msgid "Close"
+msgstr "Cerrar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:23
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:152
+msgid "Search in document..."
+msgstr "Buscar en el documento..."
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:30
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:154
+msgid "Replace with..."
+msgstr "Reemplazar con..."
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:40
+msgid "Previous"
+msgstr "Anterior"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:46
+msgid "Next"
+msgstr "Siguiente"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:55
+msgid "Replace"
+msgstr "Reemplazar"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:59
+msgid "Replace all"
+msgstr "Reemplazar todo"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:167
+msgid "matches"
+msgstr "coincidencias"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:171
+msgid "No matches"
+msgstr "Sin coincidencias"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/support/search.py:194
+msgid "of"
+msgstr "de"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:119
+msgid "Recovered session"
+msgstr "Sesión recuperada"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:150
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:284
+msgid "Search (Ctrl+F)"
+msgstr "Buscar (Ctrl+F)"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:203
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:413
+msgid "Create and edit Markdown documents with real-time preview"
+msgstr "Crea y edita documentos Markdown con vista previa en tiempo real"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:207
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:423
+msgid ""
+"You can also use Ctrl+N to create a new file or Ctrl+O to open an existing "
+"one"
+msgstr ""
+"También puedes usar Ctrl+N para crear un nuevo archivo o Ctrl+O para abrir "
+"uno existente"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:270
+msgid "Open Recent"
+msgstr "Abrir reciente"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:271
+msgid "Close current file"
+msgstr "Cerrar el archivo actual"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:316
+msgid "Main Menu"
+msgstr "Menú principal"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:320
+msgid "Save as"
+msgstr "Guardar como"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:323
+msgid "Print..."
+msgstr "Imprimir..."
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:327
+msgid "Toggle outline"
+msgstr "Alternar el esquema"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:328
+msgid "Toggle focus mode"
+msgstr "Alternar el modo concentración"
+
+#. These two actions were registered but reachable from nowhere.
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:334
+msgid "Markdown Syntax"
+msgstr "Sintaxis de Markdown"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:336
+msgid "About Markdown Editor"
+msgstr "Acerca de Editor de Markdown"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:387
+msgid "No recent files"
+msgstr "No hay archivos recientes"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:444
+msgid "New Document"
+msgstr "Nuevo Documento"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:445
+msgid "Create a new blank Markdown document"
+msgstr "Crear un nuevo documento Markdown en blanco"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:446
+msgid "Create New"
+msgstr "Crear Nuevo"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:453
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:455
+msgid "Open File"
+msgstr "Abrir Archivo"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:454
+msgid "Open an existing Markdown document"
+msgstr "Abrir un documento Markdown existente"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:553
+msgid "Bold (Ctrl+B)"
+msgstr "Negrita (Ctrl+B)"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:554
+msgid "Italic (Ctrl+I)"
+msgstr "Cursiva (Ctrl+I)"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:566
+msgid "Insert link (Ctrl+K)"
+msgstr "Insertar enlace (Ctrl+K)"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:576
+msgid "Select header"
+msgstr "Seleccionar encabezado"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:619
+msgid "Editor only"
+msgstr "Solo editor"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:623
+msgid "Split view"
+msgstr "Vista partida"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:628
+msgid "Preview only"
+msgstr "Solo vista previa"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:664
+msgid "Outline"
+msgstr "Esquema"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:705
+msgid "No headings"
+msgstr "Sin encabezados"
+
+#: /home/pablo/Escritorio/markdown-editor/src/markdown_editor/ui/window.py:853
+msgid "Preview requires WebKitGTK for GTK4 (WebKit 6.0)"
+msgstr "La vista previa requiere WebKitGTK para GTK4 (WebKit 6.0)"
+
+#~ msgid "Dark Theme"
+#~ msgstr "Tema Oscuro"
+
+#~ msgid "Use dark theme for the application"
+#~ msgstr "Usar tema oscuro para la aplicación"
+
+#~ msgid "Application menu"
+#~ msgstr "Menú de aplicación"
+
+#~ msgid "About"
+#~ msgstr "Acerca de"
+
+#~ msgid "Show or hide outline"
+#~ msgstr "Mostrar u ocultar esquema"
+
+#~ msgid "_Open"
+#~ msgstr "_Abrir"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Cancelar"
+
+#~ msgid "_Save"
+#~ msgstr "_Guardar"
+
+#~ msgid "Accept"
+#~ msgstr "Aceptar"
+
+#~ msgid "Header 1"
+#~ msgstr "Encabezado 1"
+
+#~ msgid "Header 2"
+#~ msgstr "Encabezado 2"
+
+#~ msgid "Header 3"
+#~ msgstr "Encabezado 3"
+
+#~ msgid "Cell 1"
+#~ msgstr "Celda 1"
+
+#~ msgid "Cell 2"
+#~ msgstr "Celda 2"
+
+#~ msgid "Cell 3"
+#~ msgstr "Celda 3"
+
+#~ msgid "Cell 4"
+#~ msgstr "Celda 4"
+
+#~ msgid "Cell 5"
+#~ msgstr "Celda 5"
+
+#~ msgid "Cell 6"
+#~ msgstr "Celda 6"
+
+#~ msgid "GitHub"
+#~ msgstr "GitHub"
+
+#~ msgid "GitHub Light"
+#~ msgstr "GitHub Light"
+
+#~ msgid "GitHub Dark"
+#~ msgstr "GitHub Dark"
+
+#~ msgid "GitLab"
+#~ msgstr "GitLab"

@@ -20,6 +20,7 @@ from ..core.i18n import setup_locale, translate as _
 from ..services.document_service import DocumentService
 from ..services.html_preview import HtmlPreviewService
 from ..services.session_service import SessionService
+from . import icons
 from .styles import apply_custom_css
 from .support.editor_actions import EditorActionsMixin
 from .support.file_operations import FileOperationsMixin
@@ -53,6 +54,8 @@ class MarkdownEditorWindow(
         self.apply_render_style()
         self.set_title(_("Markdown Editor"))
         self.set_default_size(1000, 700)
+        # The HIG asks apps to keep working down to 360x294 logical pixels.
+        self.set_size_request(360, 294)
         self.apply_saved_config()
         self.setup_ui()
         self.setup_shortcuts()
@@ -66,7 +69,7 @@ class MarkdownEditorWindow(
             setup_locale(saved_language)
             self.current_language = saved_language
 
-        self.apply_theme(self.config.get("dark_theme", False))
+        self.apply_color_scheme(self.get_color_scheme())
         self.focus_mode_enabled = self.config.get("focus_mode", False)
 
     def configure_auto_save(self):
@@ -130,11 +133,12 @@ class MarkdownEditorWindow(
         else:
             self.set_title(_("Markdown Editor"))
 
-        header_bar = self.get_titlebar()
-        if header_bar and hasattr(header_bar, "get_title_widget"):
-            title_widget = header_bar.get_title_widget()
-            if title_widget:
-                title_widget.set_label(_("Markdown Editor"))
+        # get_titlebar() on an AdwApplicationWindow returns an internal
+        # AdwGizmo, not this header bar (which lives inside the content box),
+        # so the previous lookup never found the label and the title kept the
+        # old language.
+        if hasattr(self, "header_title_label"):
+            self.header_title_label.set_label(_("Markdown Editor"))
 
         if hasattr(self, "new_btn"):
             self.new_btn.set_tooltip_text(_("New document"))
@@ -193,46 +197,72 @@ class MarkdownEditorWindow(
             )
 
     def update_welcome_page_language(self):
-        if hasattr(self, "welcome_title"):
-            self.welcome_title.set_markup(f"<span size='x-large' weight='bold'>{_('Markdown Editor')}</span>")
-        if hasattr(self, "welcome_subtitle"):
-            self.welcome_subtitle.set_text(_("Create and edit Markdown documents with real-time preview"))
-        if hasattr(self, "welcome_info"):
-            self.welcome_info.set_text(_("You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one"))
         if hasattr(self, "welcome_page"):
-            self.recreate_welcome_cards()
+            self.welcome_page.set_title(_("Markdown Editor"))
+            self.welcome_page.set_description(
+                _("Create and edit Markdown documents with real-time preview")
+            )
+        if hasattr(self, "welcome_info"):
+            self.welcome_info.set_text(
+                _("You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one")
+            )
+        self.recreate_welcome_cards()
 
     def recreate_welcome_cards(self):
-        welcome_container = self.welcome_page
-        children = []
-        child = welcome_container.get_first_child()
-        while child:
-            children.append(child)
-            child = child.get_next_sibling()
+        """Swap the two cards for freshly translated ones."""
+        if not hasattr(self, "welcome_options"):
+            return
 
-        if len(children) >= 4:
-            options_box = children[3]
-            welcome_container.remove(options_box)
-            welcome_container.insert_child_after(self.create_welcome_options(), children[2])
+        parent = self.welcome_options.get_parent()
+        if parent is None:
+            return
 
-    def apply_theme(self, dark_theme):
-        style_manager = Adw.StyleManager.get_default()
-        if dark_theme:
-            style_manager.set_color_scheme(Adw.ColorScheme.FORCE_DARK)
-        else:
-            style_manager.set_color_scheme(Adw.ColorScheme.FORCE_LIGHT)
+        replacement = self.create_welcome_options()
+        parent.insert_child_after(replacement, self.welcome_options)
+        parent.remove(self.welcome_options)
+        self.welcome_options = replacement
+
+    def get_color_scheme(self):
+        """Stored colour scheme, migrating the old boolean setting."""
+        scheme = self.config.get("color_scheme")
+        if scheme in ("default", "light", "dark"):
+            return scheme
+        return "dark" if self.config.get("dark_theme", False) else "default"
+
+    def apply_color_scheme(self, scheme):
+        """Follow the system preference unless the user overrides it.
+
+        The previous version mapped the switch's "off" position to
+        FORCE_LIGHT, so the app actively overrode a dark desktop instead of
+        following it.
+        """
+        Adw.StyleManager.get_default().set_color_scheme(
+            {
+                "light": Adw.ColorScheme.FORCE_LIGHT,
+                "dark": Adw.ColorScheme.FORCE_DARK,
+            }.get(scheme, Adw.ColorScheme.DEFAULT)
+        )
+
+    def change_color_scheme(self, scheme):
+        self.apply_color_scheme(scheme)
+        self.config.set("color_scheme", scheme)
 
     def setup_ui(self):
-        header_bar = Gtk.HeaderBar()
-        header_bar.set_title_widget(Gtk.Label(label=_("Markdown Editor")))
+        # AdwToolbarView + AdwHeaderBar instead of a Gtk.HeaderBar packed into
+        # a plain Gtk.Box: the toolbar view is what gives the top/bottom bar
+        # behaviour and integrates with the window's titlebar area.
+        header_bar = Adw.HeaderBar()
+        self.header_title_label = Gtk.Label(label=_("Markdown Editor"))
+        header_bar.set_title_widget(self.header_title_label)
 
-        self.new_btn = Gtk.Button(icon_name="document-new-symbolic")
+        self.new_btn = Gtk.Button()
+        self.new_btn.set_icon_name(icons.name("new"))
         self.new_btn.set_tooltip_text(_("New document"))
         self.new_btn.connect("clicked", self.on_new)
         header_bar.pack_start(self.new_btn)
 
         self.open_btn = Gtk.MenuButton()
-        self.open_btn.set_icon_name("document-open-symbolic")
+        self.open_btn.set_icon_name(icons.name("open"))
         self.open_btn.set_tooltip_text(_("Open file"))
         self.open_menu = Gio.Menu()
         self.open_recent_menu = Gio.Menu()
@@ -242,23 +272,38 @@ class MarkdownEditorWindow(
         self.open_btn.set_menu_model(self.open_menu)
         header_bar.pack_start(self.open_btn)
 
-        self.save_btn = Gtk.Button(icon_name="document-save-symbolic")
+        self.save_btn = Gtk.Button()
+        self.save_btn.set_icon_name(icons.name("save"))
         self.save_btn.set_tooltip_text(_("Save file"))
         self.save_btn.connect("clicked", self.on_save)
         self.save_btn.set_sensitive(False)
         header_bar.pack_start(self.save_btn)
 
-        self.search_btn = Gtk.Button(icon_name="system-search-symbolic")
+        self.search_btn = Gtk.Button()
+        self.search_btn.set_icon_name(icons.name("search"))
         self.search_btn.set_tooltip_text(_("Search (Ctrl+F)"))
         self.search_btn.connect("clicked", lambda _button: self.toggle_search())
-        header_bar.pack_end(self.search_btn)
+        # Grouped with the other document actions on the left, leaving the
+        # primary menu alone at the end.
+        header_bar.pack_start(self.search_btn)
 
         self.setup_menu_button(header_bar)
 
-        main_content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        main_content_box.append(header_bar)
-        self.set_content(main_content_box)
-        self.setup_main_layout(main_content_box)
+        self.root_toolbar = Adw.ToolbarView()
+        self.root_toolbar.add_top_bar(header_bar)
+
+        # The search bar sits directly under the header bar, which is where the
+        # HIG puts it; it used to be at the bottom of the editor area.
+        self.search_bar = self.create_search_bar()
+        self.root_toolbar.add_top_bar(self.search_bar)
+
+        self.setup_main_layout(self.root_toolbar)
+
+        self.toast_overlay = Adw.ToastOverlay()
+        self.toast_overlay.set_child(self.root_toolbar)
+        self.set_content(self.toast_overlay)
+
+        self.setup_breakpoints()
         self.update_recent_menu()
         self.apply_css()
         self.show_welcome_state()
@@ -267,7 +312,7 @@ class MarkdownEditorWindow(
 
     def setup_menu_button(self, header_bar):
         self.menu_button = Gtk.MenuButton()
-        self.menu_button.set_icon_name("open-menu-symbolic")
+        self.menu_button.set_icon_name(icons.name("menu"))
         self.menu_button.set_tooltip_text(_("Main Menu"))
 
         menu_model = Gio.Menu()
@@ -285,6 +330,9 @@ class MarkdownEditorWindow(
 
         app_section = Gio.Menu()
         app_section.append(_("Preferences"), "app.preferences")
+        # These two actions were registered but reachable from nowhere.
+        app_section.append(_("Markdown Syntax"), "app.syntax_help")
+        app_section.append(_("Keyboard Shortcuts"), "app.shortcuts")
         app_section.append(_("About Markdown Editor"), "app.about")
         menu_model.append_section(None, app_section)
         self.menu_button.set_menu_model(menu_model)
@@ -338,10 +386,11 @@ class MarkdownEditorWindow(
             self.add_action(empty_action)
             self.open_recent_menu.append(_("No recent files"), "win.no-recent-files")
 
-    def setup_main_layout(self, parent_box):
-        overlay = Gtk.Overlay()
+    def setup_main_layout(self, toolbar_view):
         self.content_stack = Gtk.Stack()
         self.content_stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        self.content_stack.set_hexpand(True)
+        self.content_stack.set_vexpand(True)
 
         self.welcome_page = self.create_welcome_page()
         self.content_stack.add_named(self.welcome_page, "welcome")
@@ -349,49 +398,37 @@ class MarkdownEditorWindow(
         self.editor_area = self.create_editor_area()
         self.content_stack.add_named(self.editor_area, "editor")
 
-        overlay.set_child(self.content_stack)
-        overlay.set_hexpand(True)
-        overlay.set_vexpand(True)
-        parent_box.append(overlay)
+        toolbar_view.set_content(self.content_stack)
 
     def create_welcome_page(self):
-        welcome_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        welcome_container.set_valign(Gtk.Align.CENTER)
-        welcome_container.set_halign(Gtk.Align.CENTER)
-        welcome_container.set_spacing(40)
-        welcome_container.set_margin_start(40)
-        welcome_container.set_margin_end(40)
+        """AdwStatusPage, the documented pattern for a placeholder view.
 
-        icon = Gtk.Image()
-        icon.set_from_icon_name("text-markdown-symbolic")
-        icon.set_pixel_size(128)
-        icon.add_css_class("dim-label")
-        icon.set_margin_top(50)
-        welcome_container.append(icon)
+        It supplies the icon, title, description and centring that were being
+        hand-assembled, and stays legible when the window is narrow.
+        """
+        self.welcome_page = Adw.StatusPage()
+        self.welcome_page.set_icon_name(icons.name("markdown"))
+        self.welcome_page.set_title(_("Markdown Editor"))
+        self.welcome_page.set_description(
+            _("Create and edit Markdown documents with real-time preview")
+        )
 
-        self.welcome_title = Gtk.Label()
-        self.welcome_title.set_markup(f"<span size='x-large' weight='bold'>{_('Markdown Editor')}</span>")
-        self.welcome_title.add_css_class("title-1")
-        welcome_container.append(self.welcome_title)
-
-        self.welcome_subtitle = Gtk.Label()
-        self.welcome_subtitle.set_text(_("Create and edit Markdown documents with real-time preview"))
-        self.welcome_subtitle.add_css_class("dim-label")
-        self.welcome_subtitle.set_wrap(True)
-        self.welcome_subtitle.set_justify(Gtk.Justification.CENTER)
-        welcome_container.append(self.welcome_subtitle)
-
-        welcome_container.append(self.create_welcome_options())
+        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=24)
+        body.set_halign(Gtk.Align.CENTER)
+        self.welcome_options = self.create_welcome_options()
+        body.append(self.welcome_options)
 
         self.welcome_info = Gtk.Label()
-        self.welcome_info.set_text(_("You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one"))
+        self.welcome_info.set_text(
+            _("You can also use Ctrl+N to create a new file or Ctrl+O to open an existing one")
+        )
         self.welcome_info.add_css_class("dim-label")
-        self.welcome_info.set_margin_top(40)
         self.welcome_info.set_wrap(True)
         self.welcome_info.set_justify(Gtk.Justification.CENTER)
-        welcome_container.append(self.welcome_info)
+        body.append(self.welcome_info)
 
-        return welcome_container
+        self.welcome_page.set_child(body)
+        return self.welcome_page
 
     def refresh_recent_files_ui(self):
         recent_files = self.get_recent_files()
@@ -417,11 +454,12 @@ class MarkdownEditorWindow(
                 _("Open an existing Markdown document"),
                 _("Open File"),
                 self.on_open_from_welcome,
+                suggested=False,
             )
         )
         return options_box
 
-    def create_welcome_card(self, icon_name, title, description, button_text, callback):
+    def create_welcome_card(self, icon_name, title, description, button_text, callback, suggested=True):
         card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         card.add_css_class("welcome-card")
         card.set_size_request(280, 200)
@@ -445,7 +483,10 @@ class MarkdownEditorWindow(
         card.append(desc)
 
         button = Gtk.Button(label=button_text)
-        button.add_css_class("suggested-action")
+        # The HIG allows a single suggested action per view, so only the first
+        # card carries the accent.
+        if suggested:
+            button.add_css_class("suggested-action")
         button.add_css_class("pill")
         button.set_margin_top(20)
         button.connect("clicked", callback)
@@ -453,13 +494,17 @@ class MarkdownEditorWindow(
         return card
 
     def create_editor_area(self):
-        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        main_box.append(self.create_toolbar())
-        self.create_main_panels(main_box)
-        self.search_bar = self.create_search_bar()
-        main_box.append(self.search_bar)
-        main_box.append(self.create_status_bar())
-        return main_box
+        # A nested toolbar view so the formatting toolbar and the status bar are
+        # real top/bottom bars of the editor, and only exist in editor mode.
+        editor_toolbar = Adw.ToolbarView()
+        editor_toolbar.add_top_bar(self.create_toolbar())
+
+        panels_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.create_main_panels(panels_box)
+        editor_toolbar.set_content(panels_box)
+
+        editor_toolbar.add_bottom_bar(self.create_status_bar())
+        return editor_toolbar
 
     def create_toolbar(self):
         toolbar_container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -469,10 +514,16 @@ class MarkdownEditorWindow(
         toolbar_container.set_margin_end(8)
         toolbar_container.set_margin_top(4)
         toolbar_container.set_margin_bottom(4)
-        toolbar_container.append(self.create_format_buttons())
-        spacer = Gtk.Box()
-        spacer.set_hexpand(True)
-        toolbar_container.append(spacer)
+        # The fifteen formatting buttons cannot all fit on a narrow window, so
+        # they scroll horizontally instead of being clipped. Without
+        # propagate-natural-width the scrolled window is free to shrink, which
+        # is what lets the row give way before the view switcher does.
+        format_scroll = Gtk.ScrolledWindow()
+        format_scroll.set_policy(Gtk.PolicyType.EXTERNAL, Gtk.PolicyType.NEVER)
+        format_scroll.set_hexpand(True)
+        format_scroll.set_child(self.create_format_buttons())
+        toolbar_container.append(format_scroll)
+
         toolbar_container.append(self.create_view_buttons())
         return toolbar_container
 
@@ -481,9 +532,9 @@ class MarkdownEditorWindow(
         toolbar.set_spacing(0)
         toolbar.set_halign(Gtk.Align.START)
 
-        def create_icon_button(icon_name, tooltip, callback=None):
+        def create_icon_button(icon_key, tooltip, callback=None):
             btn = Gtk.Button()
-            btn.set_icon_name(icon_name)
+            btn.set_icon_name(icons.name(icon_key))
             btn.set_tooltip_text(tooltip)
             btn.add_css_class("flat")
             btn.add_css_class("super-compact-btn")
@@ -499,29 +550,29 @@ class MarkdownEditorWindow(
             sep.add_css_class("group-separator")
             toolbar.append(sep)
 
-        toolbar.append(create_icon_button("format-text-bold-symbolic", _("Bold (Ctrl+B)"), lambda _x: self.insert_format("**", "**")))
-        toolbar.append(create_icon_button("format-text-italic-symbolic", _("Italic (Ctrl+I)"), lambda _x: self.insert_format("*", "*")))
-        toolbar.append(create_icon_button("format-text-strikethrough-fr-symbolic", _("Strikethrough"), lambda _x: self.insert_format("~~", "~~")))
+        toolbar.append(create_icon_button("bold", _("Bold (Ctrl+B)"), lambda _x: self.insert_format("**", "**")))
+        toolbar.append(create_icon_button("italic", _("Italic (Ctrl+I)"), lambda _x: self.insert_format("*", "*")))
+        toolbar.append(create_icon_button("strikethrough", _("Strikethrough"), lambda _x: self.insert_format("~~", "~~")))
         toolbar.append(self.create_headers_menu())
         add_separator()
-        toolbar.append(create_icon_button("view-list-bullet-symbolic", _("Bullet list"), lambda _x: self.insert_list_item("unordered")))
-        toolbar.append(create_icon_button("format-ordered-list-symbolic", _("Numbered list"), lambda _x: self.insert_list_item("ordered")))
-        toolbar.append(create_icon_button("view-list-details-symbolic", _("Task list"), lambda _x: self.insert_list_item("task")))
-        toolbar.append(create_icon_button("format-text-blockquote-symbolic", _("Quote"), lambda _x: self.insert_format("> ", "")))
+        toolbar.append(create_icon_button("list-bullet", _("Bullet list"), lambda _x: self.insert_list_item("unordered")))
+        toolbar.append(create_icon_button("list-ordered", _("Numbered list"), lambda _x: self.insert_list_item("ordered")))
+        toolbar.append(create_icon_button("list-task", _("Task list"), lambda _x: self.insert_list_item("task")))
+        toolbar.append(create_icon_button("quote", _("Quote"), lambda _x: self.insert_format("> ", "")))
         add_separator()
-        toolbar.append(create_icon_button("format-text-code-symbolic", _("Inline code"), lambda _x: self.insert_format("`", "`")))
-        toolbar.append(create_icon_button("code-context-symbolic", _("Code block"), lambda _x: self.insert_format("```\n", "\n```")))
+        toolbar.append(create_icon_button("code-inline", _("Inline code"), lambda _x: self.insert_format("`", "`")))
+        toolbar.append(create_icon_button("code-block", _("Code block"), lambda _x: self.insert_format("```\n", "\n```")))
         add_separator()
-        toolbar.append(create_icon_button("insert-link-symbolic", _("Insert link (Ctrl+K)"), self.insert_link_markup))
-        toolbar.append(create_icon_button("folder-images-symbolic", _("Insert image"), self.insert_image_markup))
-        toolbar.append(create_icon_button("folder-table-symbolic", _("Insert table"), self.insert_table))
+        toolbar.append(create_icon_button("link", _("Insert link (Ctrl+K)"), self.insert_link_markup))
+        toolbar.append(create_icon_button("image", _("Insert image"), self.insert_image_markup))
+        toolbar.append(create_icon_button("table", _("Insert table"), self.insert_table))
         add_separator()
-        toolbar.append(create_icon_button("menu_new_sep-symbolic", _("Horizontal line"), lambda _x: self.insert_format("\n---\n", "")))
+        toolbar.append(create_icon_button("rule", _("Horizontal line"), lambda _x: self.insert_format("\n---\n", "")))
         return toolbar
 
     def create_headers_menu(self):
         headers_button = Gtk.MenuButton()
-        headers_button.set_icon_name("font-size-symbolic")
+        headers_button.set_icon_name(icons.name("heading"))
         headers_button.set_tooltip_text(_("Select header"))
         headers_button.add_css_class("super-compact-btn")
         headers_button.set_size_request(18, 18)
@@ -556,25 +607,25 @@ class MarkdownEditorWindow(
         view_buttons_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         view_buttons_box.set_spacing(0)
 
-        def create_view_button(icon_name, tooltip):
+        def create_view_button(icon_key, tooltip):
             btn = Gtk.Button()
-            btn.set_icon_name(icon_name)
+            btn.set_icon_name(icons.name(icon_key))
             btn.set_tooltip_text(tooltip)
             btn.add_css_class("flat")
             btn.add_css_class("super-compact-btn")
             btn.set_size_request(18, 18)
             return btn
 
-        self.editor_view_btn = create_view_button("document-edit-symbolic", _("Editor only"))
+        self.editor_view_btn = create_view_button("view-editor", _("Editor only"))
         self.editor_view_btn.connect("clicked", lambda _x: self.set_view_mode("editor"))
         view_buttons_box.append(self.editor_view_btn)
 
-        self.split_view_btn = create_view_button("text-frame-unlink-symbolic", _("Split view"))
+        self.split_view_btn = create_view_button("view-split", _("Split view"))
         self.split_view_btn.connect("clicked", lambda _x: self.set_view_mode("split"))
         self.split_view_btn.add_css_class("view-btn-active")
         view_buttons_box.append(self.split_view_btn)
 
-        self.preview_view_btn = create_view_button("multimedia-photo-viewer-symbolic", _("Preview only"))
+        self.preview_view_btn = create_view_button("view-preview", _("Preview only"))
         self.preview_view_btn.connect("clicked", lambda _x: self.set_view_mode("preview"))
         view_buttons_box.append(self.preview_view_btn)
         return view_buttons_box
@@ -846,50 +897,64 @@ class MarkdownEditorWindow(
         status_box.set_margin_top(3)
         status_box.set_margin_bottom(3)
 
+        def metric(text):
+            label = Gtk.Label(label=text)
+            label.add_css_class("dim-label")
+            # Tabular figures, so the numbers do not jitter as they change.
+            label.add_css_class("numeric")
+            return label
+
+        def separator():
+            sep = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+            sep.set_margin_top(2)
+            sep.set_margin_bottom(2)
+            return sep
+
         self.doc_status_label = Gtk.Label(label=_("Ready"))
         self.doc_status_label.add_css_class("dim-label")
         status_box.append(self.doc_status_label)
 
-        def add_separator():
-            sep = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-            sep.set_margin_top(2)
-            sep.set_margin_bottom(2)
-            status_box.append(sep)
-
-        add_separator()
-        self.lines_label = Gtk.Label(label=f"1 {_('lines')}")
-        self.lines_label.add_css_class("dim-label")
+        status_box.append(separator())
+        self.lines_label = metric(f"1 {_('lines')}")
         status_box.append(self.lines_label)
-        add_separator()
-        self.words_label = Gtk.Label(label=f"0 {_('words')}")
-        self.words_label.add_css_class("dim-label")
+        status_box.append(separator())
+        self.words_label = metric(f"0 {_('words')}")
         status_box.append(self.words_label)
-        add_separator()
-        self.chars_label = Gtk.Label(label=f"0 {_('chars')}")
-        self.chars_label.add_css_class("dim-label")
-        status_box.append(self.chars_label)
-        add_separator()
-        self.headers_label = Gtk.Label(label=f"0 {_('headers')}")
-        self.headers_label.add_css_class("dim-label")
-        status_box.append(self.headers_label)
-        add_separator()
-        self.reading_time_label = Gtk.Label(label=f"1 {_('min read')}")
-        self.reading_time_label.add_css_class("dim-label")
-        status_box.append(self.reading_time_label)
-        add_separator()
-        self.size_label = Gtk.Label(label="0 B")
-        self.size_label.add_css_class("dim-label")
-        status_box.append(self.size_label)
+
+        # Secondary metrics live in their own box so a breakpoint can drop them
+        # when the window gets too narrow to hold the whole row.
+        extra = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        self.status_extra_box = extra
+        extra.append(separator())
+        self.chars_label = metric(f"0 {_('chars')}")
+        extra.append(self.chars_label)
+        extra.append(separator())
+        self.headers_label = metric(f"0 {_('headers')}")
+        extra.append(self.headers_label)
+        extra.append(separator())
+        self.reading_time_label = metric(f"1 {_('min read')}")
+        extra.append(self.reading_time_label)
+        extra.append(separator())
+        self.size_label = metric("0 B")
+        extra.append(self.size_label)
+        status_box.append(extra)
+
         spacer = Gtk.Box()
         spacer.set_hexpand(True)
         status_box.append(spacer)
-        self.cursor_label = Gtk.Label(label=f"{_('Line')} 1, {_('Col')} 1")
-        self.cursor_label.add_css_class("dim-label")
-        status_box.append(self.cursor_label)
-        add_separator()
+
+        # Cursor position and file type also go in their own box: with these
+        # plus the metrics above, the status bar alone demanded ~472px, which
+        # kept the whole window from ever getting narrow.
+        trailing = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        self.status_trailing_box = trailing
+        self.cursor_label = metric(f"{_('Line')} 1, {_('Col')} 1")
+        trailing.append(self.cursor_label)
+        trailing.append(separator())
         self.filetype_label = Gtk.Label(label="Markdown")
         self.filetype_label.add_css_class("dim-label")
-        status_box.append(self.filetype_label)
+        trailing.append(self.filetype_label)
+        status_box.append(trailing)
         return status_box
 
     def show_welcome_state(self):
@@ -911,8 +976,15 @@ class MarkdownEditorWindow(
         if print_action:
             print_action.set_enabled(True)
 
+    def show_toast(self, toast):
+        """Transient feedback. Accepts a string or a ready-made AdwToast."""
+        if isinstance(toast, str):
+            toast = Adw.Toast.new(toast)
+        if hasattr(self, "toast_overlay"):
+            self.toast_overlay.add_toast(toast)
+
     def apply_css(self):
-        apply_custom_css(self.config.get("render_style", "default"))
+        apply_custom_css()
 
     def apply_editor_preferences(self):
         font_size = max(1, int(self.config.get("editor_font_size", 10)))
@@ -925,15 +997,23 @@ class MarkdownEditorWindow(
             self.text_view.set_left_margin(side_margin)
             self.text_view.set_right_margin(side_margin)
             self.text_view.add_css_class("editor-custom")
-            css_provider = Gtk.CssProvider()
-            css_provider.load_from_data(
-                f"textview.editor-custom {{ font-size: {font_size}pt; }}".encode()
-            )
-            Gtk.StyleContext.add_provider_for_display(
-                Gdk.Display.get_default(),
-                css_provider,
-                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1,
-            )
+            # Replace the previous provider: this runs on every font-size
+            # change, and adding without removing stacked them up.
+            display = Gdk.Display.get_default()
+            if display is not None:
+                if getattr(self, "_editor_font_provider", None) is not None:
+                    Gtk.StyleContext.remove_provider_for_display(
+                        display, self._editor_font_provider
+                    )
+                self._editor_font_provider = Gtk.CssProvider()
+                self._editor_font_provider.load_from_string(
+                    f"textview.editor-custom {{ font-size: {font_size}pt; }}"
+                )
+                Gtk.StyleContext.add_provider_for_display(
+                    display,
+                    self._editor_font_provider,
+                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1,
+                )
 
         self.preview_width_chars = 0 if content_width == 0 else max(20, min(400, content_width))
         if hasattr(self, "text_buffer"):
@@ -958,6 +1038,52 @@ class MarkdownEditorWindow(
             self.toolbar_container.set_visible(not enabled)
         if hasattr(self, "status_box"):
             self.status_box.set_visible(not enabled)
+
+    def setup_breakpoints(self):
+        """Collapse progressively as the window narrows.
+
+        Only one breakpoint applies at a time: AdwBreakpointBin uses the last
+        added one whose condition matches, so the conditions here are made
+        mutually exclusive and the narrower one repeats the setters of the
+        wider one. `sp` units follow the user's text scaling factor.
+        """
+        # Medium: the window still holds the panes, but not every metric.
+        medium = Adw.Breakpoint.new(
+            Adw.BreakpointCondition.parse("min-width: 701sp and max-width: 900sp")
+        )
+        if hasattr(self, "status_extra_box"):
+            medium.add_setter(self.status_extra_box, "visible", False)
+        self.add_breakpoint(medium)
+
+        # Narrow: drop the remaining metrics too and show a single pane.
+        narrow = Adw.Breakpoint.new(Adw.BreakpointCondition.parse("max-width: 700sp"))
+        if hasattr(self, "status_extra_box"):
+            narrow.add_setter(self.status_extra_box, "visible", False)
+        if hasattr(self, "status_trailing_box"):
+            narrow.add_setter(self.status_trailing_box, "visible", False)
+        narrow.connect("apply", self._on_narrow_applied)
+        narrow.connect("unapply", self._on_narrow_unapplied)
+        self.add_breakpoint(narrow)
+
+    def _on_narrow_applied(self, _breakpoint):
+        self._view_mode_before_narrow = getattr(self, "current_view_mode", "split")
+        self._outline_before_narrow = self.outline_visible
+        if self.outline_visible:
+            self.toggle_outline()
+        if self.current_view_mode == "split":
+            self.set_view_mode("editor")
+        if hasattr(self, "split_view_btn"):
+            self.split_view_btn.set_sensitive(False)
+
+    def _on_narrow_unapplied(self, _breakpoint):
+        if hasattr(self, "split_view_btn"):
+            self.split_view_btn.set_sensitive(True)
+        if getattr(self, "_view_mode_before_narrow", None):
+            self.set_view_mode(self._view_mode_before_narrow)
+            self._view_mode_before_narrow = None
+        if getattr(self, "_outline_before_narrow", False) and not self.outline_visible:
+            self.toggle_outline()
+            self._outline_before_narrow = False
 
     def setup_shortcuts(self):
         controller = Gtk.ShortcutController()

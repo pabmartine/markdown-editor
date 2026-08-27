@@ -9,17 +9,11 @@ finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --device=dri
-  # Acceso a configuración del usuario (sandbox)
-  - --filesystem=xdg-config:create
-  - --filesystem=xdg-data:create
-  # Solo acceso mínimo necesario
-  - --filesystem=xdg-documents:ro
-  - --filesystem=xdg-desktop:ro
-  # Portales necesarios para GTK
-  - --talk-name=org.freedesktop.portal.*
-  - --talk-name=org.gtk.vfs.*
-  # Para themes
-  - --talk-name=org.freedesktop.appearance
+  # Open/save/export all go through the file chooser portal, which hands the
+  # app the single file the user picked, so no filesystem permission is needed.
+  # Its own config lives in the per-app directory, always writable inside the
+  # sandbox. Portal access (including the appearance settings libadwaita reads
+  # to follow the system style) is allowed by default.
 
 modules:
   - name: markdown-editor
